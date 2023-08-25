@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 image = "0.24.7"
-progress_bar = "1.0.5"
+lib-ray-tracer = { path = "../" }
