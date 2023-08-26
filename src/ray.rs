@@ -33,7 +33,7 @@ impl Ray {
     pub fn color(&self) -> Rgba<u8> {
         match self.hit_sphere(Point3::from([0.0, 0.0, -1.0]), 0.5) {
             Some(t) if t > 0.0 => {
-                let normal_vector = self.at(t) - Vector3::from([0.0, 0.0, -1.0]);
+                let normal_vector = (self.at(t).coords - Vector3::from([0.0, 0.0, -1.0])).normalize();
                 generate_color(
                     0.5 * (normal_vector.x + 1.0),
                     0.5 * (normal_vector.y + 1.0),
@@ -60,9 +60,9 @@ fn generate_color(red: f64, green: f64, blue: f64) -> Rgba<u8> {
     assert!(0.0 <= blue && blue <= 1.0);
 
     Rgba([
-        (red * 255.0) as u8,
-        (green * 255.0) as u8,
-        (blue * 255.0) as u8,
+        (red * 255.999) as u8,
+        (green * 255.999) as u8,
+        (blue * 255.999) as u8,
         255,
     ])
 }
