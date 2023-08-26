@@ -12,5 +12,5 @@ fn main() {
     );
     let img = renderer.render_image();
 
-    img.save("generated_images/gradient.png").unwrap();
+    img.save("generated_images/sphere.png").unwrap();
 }
