@@ -1,4 +1,4 @@
-use lib_ray_tracer::{camera::Camera, world::World, sphere::Sphere, Renderer};
+use lib_ray_tracer::{camera::Camera, sphere::Sphere, world::World, Renderer};
 use nalgebra::Point3;
 
 fn main() {
@@ -11,13 +11,9 @@ fn main() {
     world.add(Sphere::new(Point3::from([0.0, 0.0, -1.0]), 0.5));
     world.add(Sphere::new(Point3::from([0.0, -100.5, -1.0]), 100.0));
 
-    let renderer = Renderer::new(
-        aspect_ratio,
-        image_width,
-        camera,
-        world
-    );
-    let img = renderer.render_image();
+    let renderer = Renderer::new(aspect_ratio, image_width, camera);
+    let img = renderer.render_image(&world);
 
-    img.save("generated_images/updated_sphere_normal.png").unwrap();
+    img.save("generated_images/updated_sphere_normal.png")
+        .unwrap();
 }

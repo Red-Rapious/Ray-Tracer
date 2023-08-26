@@ -42,9 +42,7 @@ pub struct World {
 
 impl World {
     pub fn empty() -> Self {
-        Self {
-            objects: vec![]
-        }
+        Self { objects: vec![] }
     }
 
     pub fn add(&mut self, object: impl Hittable + 'static) {
@@ -57,7 +55,11 @@ impl World {
         let mut closest = t_interval.max as f64;
 
         for object in self.objects.iter() {
-            if object.hit(ray, RealInterval::min_max(t_interval.min, closest as f32), &mut temporary_record) {
+            if object.hit(
+                ray,
+                RealInterval::min_max(t_interval.min, closest as f32),
+                &mut temporary_record,
+            ) {
                 hit_anything = true;
                 closest = temporary_record.t;
                 *hit_record = temporary_record.clone();

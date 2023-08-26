@@ -1,7 +1,7 @@
-use nalgebra::Point3;
-use real_interval::RealInterval;
 use crate::ray::Ray;
 use crate::world::{HitRecord, Hittable};
+use nalgebra::Point3;
+use real_interval::RealInterval;
 
 pub struct Sphere {
     center: Point3<f64>,
