@@ -26,43 +26,7 @@ impl Ray {
         self.origin + t * self.direction
     }
 
-    /*fn hit_sphere(&self, center: Point3<f64>, radius: f64) -> Option<f64> {
-        let oc = self.origin - center;
-        let a = self.direction.norm_squared();
-        let half_b = oc.dot(&self.direction);
-        let c = oc.norm_squared() - radius * radius;
-        let discriminant = half_b * half_b - a * c;
-
-        if discriminant < 0.0 {
-            None
-        } else {
-            Some((-half_b - discriminant.sqrt()) / a)
-        }
-    }*/
-
     pub fn color(&self, world: &World) -> Rgba<u8> {
-        /*match self.hit_sphere(Point3::from([0.0, 0.0, -1.0]), 0.5) {
-            Some(t) if t > 0.0 => {
-                let normal_vector =
-                    (self.at(t).coords - Vector3::from([0.0, 0.0, -1.0])).normalize();
-                generate_color(
-                    0.5 * (normal_vector.x + 1.0),
-                    0.5 * (normal_vector.y + 1.0),
-                    0.5 * (normal_vector.z + 1.0),
-                )
-            }
-            _ => {
-                let unit_direction = self.direction.normalize();
-                let a = 0.5 * (unit_direction.y + 1.0);
-
-                generate_color(
-                    (1.0 - a) + a * 0.5,
-                    (1.0 - a) + a * 0.7,
-                    (1.0 - a) + a * 1.0,
-                )
-            }
-        }*/
-
         let mut hit_record = HitRecord::default();
         if world.hit(self, 0.0, f64::INFINITY, &mut hit_record) {
             generate_color(
