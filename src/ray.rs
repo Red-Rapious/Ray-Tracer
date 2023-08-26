@@ -27,16 +27,22 @@ impl Ray {
         self.origin + t * self.direction
     }
 
-    pub fn color(&self, world: &World, rng: &mut dyn RngCore) -> Vector3<f64> {
+    pub fn color(&self, depth: usize, world: &World, rng: &mut dyn RngCore) -> Vector3<f64> {
         let mut hit_record = HitRecord::default();
+
+        // Max depth is exceeded, the ray will stop bouncing.
+        if depth == 0 {
+            return Vector3::from([0.0, 0.0, 0.0]);
+        }
+
         if world.hit(
             self,
-            RealInterval::min_max(0.0, f32::INFINITY),
+            RealInterval::min_max(0.001, f32::INFINITY), // 0.001 to limit "shadown acne"
             &mut hit_record,
         ) {
             let direction = random_on_hemisphere(&hit_record.normal, rng);
             let bouncing_ray = Ray::new(hit_record.hit_point, direction);
-            0.5 * bouncing_ray.color(&world, rng)
+            0.5 * bouncing_ray.color(depth-1, &world, rng)
         } else {
             // Display a blue gradient for background.
             let unit_direction = self.direction.normalize();

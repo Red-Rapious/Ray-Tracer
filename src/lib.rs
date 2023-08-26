@@ -106,7 +106,7 @@ impl Renderer {
         // Send a given number of random rays in the same overall direction.
         for _ in 0..self.camera.samples_per_pixel {
             let ray = self.random_ray(x, y, rng);
-            pixel_color += ray.color(&world, rng);
+            pixel_color += ray.color(self.camera.max_depth, &world, rng);
         }
 
         // Take the mean of the colors retrieved by the random rays.
