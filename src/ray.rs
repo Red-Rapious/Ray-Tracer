@@ -1,6 +1,8 @@
 use image::Rgba;
 use nalgebra::{Point3, Vector3};
 
+use crate::world::{HitRecord, World};
+
 pub struct Ray {
     origin: Point3<f64>,
     direction: Vector3<f64>,
@@ -24,7 +26,7 @@ impl Ray {
         self.origin + t * self.direction
     }
 
-    fn hit_sphere(&self, center: Point3<f64>, radius: f64) -> Option<f64> {
+    /*fn hit_sphere(&self, center: Point3<f64>, radius: f64) -> Option<f64> {
         let oc = self.origin - center;
         let a = self.direction.norm_squared();
         let half_b = oc.dot(&self.direction);
@@ -36,10 +38,10 @@ impl Ray {
         } else {
             Some((-half_b - discriminant.sqrt()) / a)
         }
-    }
+    }*/
 
-    pub fn color(&self) -> Rgba<u8> {
-        match self.hit_sphere(Point3::from([0.0, 0.0, -1.0]), 0.5) {
+    pub fn color(&self, world: &World) -> Rgba<u8> {
+        /*match self.hit_sphere(Point3::from([0.0, 0.0, -1.0]), 0.5) {
             Some(t) if t > 0.0 => {
                 let normal_vector =
                     (self.at(t).coords - Vector3::from([0.0, 0.0, -1.0])).normalize();
@@ -59,14 +61,32 @@ impl Ray {
                     (1.0 - a) + a * 1.0,
                 )
             }
+        }*/
+
+        let mut hit_record = HitRecord::default();
+        if world.hit(self, 0.0, f64::INFINITY, &mut hit_record) {
+            generate_color(
+                0.5 * (hit_record.normal.x + 1.0),
+                0.5 * (hit_record.normal.y + 1.0),
+                0.5 * (hit_record.normal.z + 1.0),
+            )
+        } else {
+            let unit_direction = self.direction.normalize();
+            let a = 0.5 * (unit_direction.y + 1.0);
+
+            generate_color(
+                (1.0 - a) + a * 0.5,
+                (1.0 - a) + a * 0.7,
+                (1.0 - a) + a * 1.0,
+            )
         }
     }
 }
 
 fn generate_color(red: f64, green: f64, blue: f64) -> Rgba<u8> {
-    assert!(0.0 <= red && red <= 1.0);
-    assert!(0.0 <= green && green <= 1.0);
-    assert!(0.0 <= blue && blue <= 1.0);
+    assert!(0.0 <= red && red <= 1.0, "red = {red}");
+    assert!(0.0 <= green && green <= 1.0, "green = {green}");
+    assert!(0.0 <= blue && blue <= 1.0, "blue = {blue}");
 
     Rgba([
         (red * 255.999) as u8,

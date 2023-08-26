@@ -1,16 +1,23 @@
-use lib_ray_tracer::{camera::Camera, Renderer};
+use lib_ray_tracer::{camera::Camera, world::World, sphere::Sphere, Renderer};
 use nalgebra::Point3;
 
 fn main() {
     let aspect_ratio = 16.0 / 9.0; // TODO: compute actual_ratio
     let image_width = 400;
 
+    let camera = Camera::new(1.0, 2.0, aspect_ratio, Point3::from([0.0, 0.0, 0.0]));
+
+    let mut world = World::empty();
+    world.add(Sphere::new(Point3::from([0.0, 0.0, -1.0]), 0.5));
+    world.add(Sphere::new(Point3::from([0.0, -100.5, -1.0]), 100.0));
+
     let renderer = Renderer::new(
         aspect_ratio,
         image_width,
-        Camera::new(1.0, 2.0, aspect_ratio, Point3::from([0.0, 0.0, 0.0])),
+        camera,
+        world
     );
     let img = renderer.render_image();
 
-    img.save("generated_images/sphere_normal.png").unwrap();
+    img.save("generated_images/updated_sphere_normal.png").unwrap();
 }

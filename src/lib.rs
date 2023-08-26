@@ -6,9 +6,11 @@ use progress_bar::{
     Style,
 };
 use ray::Ray;
+use world::World;
 
 pub mod camera;
-mod hittable;
+pub mod world;
+pub mod sphere;
 mod ray;
 
 /// A structure encapsulating elements to render a scene.
@@ -19,6 +21,8 @@ pub struct Renderer {
     image_height: u32,
     /// The camera used for rendering.
     camera: Camera,
+    /// The world containing hittables.
+    world: World,
     /// The world's coordinates of the upper left pixel of the viewport.
     upper_left_pixel: Point3<f64>,
     /// The vector representing the horizontal spacing between two centers of pixels.
@@ -29,7 +33,7 @@ pub struct Renderer {
 
 impl Renderer {
     /// Initialise a new renderer, given the ideal aspect ratio of the image, the image width, and a `Camera`.
-    pub fn new(aspect_ratio: f64, image_width: u32, camera: Camera) -> Self {
+    pub fn new(aspect_ratio: f64, image_width: u32, camera: Camera, world: World) -> Self {
         assert_ne!(aspect_ratio, 0.0);
 
         let image_height = (image_width as f64 / aspect_ratio) as u32;
@@ -55,6 +59,7 @@ impl Renderer {
             image_width,
             image_height,
             camera,
+            world,
             upper_left_pixel,
             pixel_delta_u,
             pixel_delta_v,
@@ -77,7 +82,7 @@ impl Renderer {
 
                 let ray = Ray::new(*self.camera.center(), ray_direction);
 
-                let pixel_color = ray.color();
+                let pixel_color = ray.color(&self.world);
                 img.put_pixel(x, y, pixel_color);
             }
         }

@@ -1,20 +1,16 @@
-use crate::Ray;
-use nalgebra::{Point3, Vector3};
-
-/// An object hittable by a ray.
-pub trait Hittable {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64, hit_record: &mut HitRecord) -> bool;
-}
-
-pub struct HitRecord {
-    pub hit_point: Point3<f64>,
-    pub normal: Vector3<f64>,
-    pub t: f64,
-}
+use nalgebra::Point3;
+use crate::ray::Ray;
+use crate::world::{HitRecord, Hittable};
 
 pub struct Sphere {
     center: Point3<f64>,
     radius: f64,
+}
+
+impl Sphere {
+    pub fn new(center: Point3<f64>, radius: f64) -> Self {
+        Self { center, radius }
+    }
 }
 
 impl Hittable for Sphere {
@@ -42,7 +38,8 @@ impl Hittable for Sphere {
 
         hit_record.t = root;
         hit_record.hit_point = ray.at(hit_record.t);
-        hit_record.normal = (hit_record.hit_point - self.center) / self.radius;
+        let outward_normal = (hit_record.hit_point - self.center) / self.radius;
+        hit_record.set_face_normal(ray, &outward_normal);
 
         true
     }
