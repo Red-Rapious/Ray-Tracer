@@ -5,13 +5,13 @@ use progress_bar::{
     finalize_progress_bar, inc_progress_bar, init_progress_bar, set_progress_bar_action, Color,
     Style,
 };
-use rand::{RngCore, Rng, thread_rng};
+use rand::{thread_rng, Rng, RngCore};
 use ray::Ray;
 use world::World;
 
 pub mod camera;
-mod ray;
 pub mod geometry;
+mod ray;
 pub mod world;
 
 /// A structure encapsulating elements to render a scene.
@@ -64,7 +64,7 @@ impl Renderer {
         }
     }
 
-    /// Render the image.
+    /// Renders the image.
     pub fn render_image(&self, world: &World) -> DynamicImage {
         let mut img = DynamicImage::new_rgb8(self.image_width, self.image_height);
         let mut rng = thread_rng();
@@ -76,12 +76,16 @@ impl Renderer {
             for x in 0..img.width() {
                 let mut pixel_color = Vector3::from([0, 0, 0]);
 
+                // Send a given number of random rays in the same overall direction.
                 for _ in 0..self.camera.samples_per_pixel {
                     let ray = self.random_ray(x, y, &mut rng);
                     pixel_color += ray.color(&world);
                 }
 
+                // Take the mean of the colors retrieved by the random rays.
                 pixel_color /= self.camera.samples_per_pixel;
+
+                // Add the pixel to the image, after converting integers to `u8`.
                 img.put_pixel(
                     x,
                     y,
@@ -99,16 +103,22 @@ impl Renderer {
         img
     }
 
+    /// Generates a ray corresponding to the given pixel `(x, y)`.
+    /// To the standard direction of the ray is added some random noise to have different samples.
     fn random_ray(&self, x: u32, y: u32, rng: &mut dyn RngCore) -> Ray {
+        // The center of the square pixel.
         let pixel_center = self.upper_left_pixel
             + (x as f64 * self.pixel_delta_u)
             + (y as f64 * self.pixel_delta_v);
+        // A random point of the square pixel.
         let pixel_sample = pixel_center + self.pixel_sample_square(rng);
+        // Vector pointing from the camera towards the random point of the pixel.
         let ray_direction = pixel_sample - self.camera.center();
 
         Ray::new(*self.camera.center(), ray_direction)
     }
 
+    /// Generates a vector from the center of the pixel to a random point of the square pixel.
     fn pixel_sample_square(&self, rng: &mut dyn RngCore) -> Vector3<f64> {
         let dx = -0.5 + rng.gen::<f64>();
         let dy = -0.5 + rng.gen::<f64>();

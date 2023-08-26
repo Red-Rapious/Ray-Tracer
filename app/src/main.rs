@@ -14,6 +14,5 @@ fn main() {
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_image(&world);
 
-    img.save("generated_images/antialiasing_100.png")
-        .unwrap();
+    img.save("generated_images/antialiasing_100.png").unwrap();
 }
