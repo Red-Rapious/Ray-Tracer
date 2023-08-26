@@ -1,4 +1,5 @@
 use nalgebra::Point3;
+use real_interval::RealInterval;
 use crate::ray::Ray;
 use crate::world::{HitRecord, Hittable};
 
@@ -14,7 +15,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64, hit_record: &mut HitRecord) -> bool {
+    fn hit(&self, ray: &Ray, t_interval: RealInterval, hit_record: &mut HitRecord) -> bool {
         let origin_to_center = ray.origin() - self.center;
         let a = ray.direction().norm_squared();
         let half_b = origin_to_center.dot(&ray.direction());
@@ -27,10 +28,10 @@ impl Hittable for Sphere {
 
         let discr_sqrt = discriminant.sqrt();
         let root = (-half_b - discr_sqrt) / a;
-        if root <= t_min || t_max <= root {
+        if root <= t_interval.min as f64 || t_interval.max as f64 <= root {
             // First root is out of the allowed range
             let root = (-half_b + discr_sqrt) / a;
-            if root <= t_min || t_max <= root {
+            if root <= t_interval.min as f64 || t_interval.max as f64 <= root {
                 // Second root is out of the range
                 return false; // No hit in the range
             }

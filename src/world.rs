@@ -1,9 +1,10 @@
 use crate::Ray;
 use nalgebra::{Point3, Vector3};
+use real_interval::RealInterval;
 
 /// An object hittable by a ray.
 pub trait Hittable {
-    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64, hit_record: &mut HitRecord) -> bool;
+    fn hit(&self, ray: &Ray, t_interval: RealInterval, hit_record: &mut HitRecord) -> bool;
 }
 
 #[derive(Default, Clone)]
@@ -50,13 +51,13 @@ impl World {
         self.objects.push(Box::new(object));
     }
 
-    pub fn hit(&self, ray: &Ray, t_min: f64, t_max: f64, hit_record: &mut HitRecord) -> bool {
+    pub fn hit(&self, ray: &Ray, t_interval: RealInterval, hit_record: &mut HitRecord) -> bool {
         let mut temporary_record = HitRecord::default();
         let mut hit_anything = false;
-        let mut closest = t_max;
+        let mut closest = t_interval.max as f64;
 
         for object in self.objects.iter() {
-            if object.hit(ray, t_min, closest, &mut temporary_record) {
+            if object.hit(ray, RealInterval::min_max(t_interval.min, closest as f32), &mut temporary_record) {
                 hit_anything = true;
                 closest = temporary_record.t;
                 *hit_record = temporary_record.clone();

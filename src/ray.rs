@@ -1,5 +1,6 @@
 use image::Rgba;
 use nalgebra::{Point3, Vector3};
+use real_interval::RealInterval;
 
 use crate::world::{HitRecord, World};
 
@@ -28,7 +29,7 @@ impl Ray {
 
     pub fn color(&self, world: &World) -> Rgba<u8> {
         let mut hit_record = HitRecord::default();
-        if world.hit(self, 0.0, f64::INFINITY, &mut hit_record) {
+        if world.hit(self, RealInterval::min_max(0.0, f32::INFINITY), &mut hit_record) {
             generate_color(
                 0.5 * (hit_record.normal.x + 1.0),
                 0.5 * (hit_record.normal.y + 1.0),
