@@ -1,16 +1,17 @@
 use camera::Camera;
-use image::{DynamicImage, GenericImage};
+use image::{DynamicImage, GenericImage, Rgba};
 use nalgebra::{Point3, Vector3};
 use progress_bar::{
     finalize_progress_bar, inc_progress_bar, init_progress_bar, set_progress_bar_action, Color,
     Style,
 };
+use rand::{RngCore, Rng, thread_rng};
 use ray::Ray;
 use world::World;
 
 pub mod camera;
 mod ray;
-pub mod sphere;
+pub mod geometry;
 pub mod world;
 
 /// A structure encapsulating elements to render a scene.
@@ -66,25 +67,51 @@ impl Renderer {
     /// Render the image.
     pub fn render_image(&self, world: &World) -> DynamicImage {
         let mut img = DynamicImage::new_rgb8(self.image_width, self.image_height);
+        let mut rng = thread_rng();
 
         init_progress_bar(self.image_height as usize);
         set_progress_bar_action("Rendering", Color::Blue, Style::Bold);
         for y in 0..img.height() {
             inc_progress_bar();
             for x in 0..img.width() {
-                let pixel_center = self.upper_left_pixel
-                    + (x as f64 * self.pixel_delta_u)
-                    + (y as f64 * self.pixel_delta_v);
-                let ray_direction = pixel_center - self.camera.center();
+                let mut pixel_color = Vector3::from([0, 0, 0]);
 
-                let ray = Ray::new(*self.camera.center(), ray_direction);
+                for _ in 0..self.camera.samples_per_pixel {
+                    let ray = self.random_ray(x, y, &mut rng);
+                    pixel_color += ray.color(&world);
+                }
 
-                let pixel_color = ray.color(&world);
-                img.put_pixel(x, y, pixel_color);
+                pixel_color /= self.camera.samples_per_pixel;
+                img.put_pixel(
+                    x,
+                    y,
+                    Rgba([
+                        pixel_color.x as u8,
+                        pixel_color.y as u8,
+                        pixel_color.z as u8,
+                        255,
+                    ]),
+                );
             }
         }
         finalize_progress_bar();
 
         img
+    }
+
+    fn random_ray(&self, x: u32, y: u32, rng: &mut dyn RngCore) -> Ray {
+        let pixel_center = self.upper_left_pixel
+            + (x as f64 * self.pixel_delta_u)
+            + (y as f64 * self.pixel_delta_v);
+        let pixel_sample = pixel_center + self.pixel_sample_square(rng);
+        let ray_direction = pixel_sample - self.camera.center();
+
+        Ray::new(*self.camera.center(), ray_direction)
+    }
+
+    fn pixel_sample_square(&self, rng: &mut dyn RngCore) -> Vector3<f64> {
+        let dx = -0.5 + rng.gen::<f64>();
+        let dy = -0.5 + rng.gen::<f64>();
+        dx * self.pixel_delta_u + dy * self.pixel_delta_v
     }
 }

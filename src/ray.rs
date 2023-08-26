@@ -1,4 +1,3 @@
-use image::Rgba;
 use nalgebra::{Point3, Vector3};
 use real_interval::RealInterval;
 
@@ -27,7 +26,7 @@ impl Ray {
         self.origin + t * self.direction
     }
 
-    pub fn color(&self, world: &World) -> Rgba<u8> {
+    pub fn color(&self, world: &World) -> Vector3<usize> {
         let mut hit_record = HitRecord::default();
         if world.hit(
             self,
@@ -52,15 +51,14 @@ impl Ray {
     }
 }
 
-fn generate_color(red: f64, green: f64, blue: f64) -> Rgba<u8> {
+fn generate_color(red: f64, green: f64, blue: f64) -> Vector3<usize> {
     assert!(0.0 <= red && red <= 1.0, "red = {red}");
     assert!(0.0 <= green && green <= 1.0, "green = {green}");
     assert!(0.0 <= blue && blue <= 1.0, "blue = {blue}");
 
-    Rgba([
-        (red * 255.999) as u8,
-        (green * 255.999) as u8,
-        (blue * 255.999) as u8,
-        255,
+    Vector3::from([
+        (red * 255.999) as usize,
+        (green * 255.999) as usize,
+        (blue * 255.999) as usize,
     ])
 }
