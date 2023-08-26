@@ -1,4 +1,4 @@
-use crate::Ray;
+use crate::ray::Ray;
 use nalgebra::{Point3, Vector3};
 use real_interval::RealInterval;
 
@@ -50,7 +50,7 @@ impl World {
         self.objects.push(Box::new(object));
     }
 
-    /// Check if the given ray hits any hittable from the `objects` list. 
+    /// Check if the given ray hits any hittable from the `objects` list.
     /// If so, it adds the information of the closest hit to `hit_record`
     pub fn hit(&self, ray: &Ray, t_interval: RealInterval, hit_record: &mut HitRecord) -> bool {
         let mut temporary_record = HitRecord::default();

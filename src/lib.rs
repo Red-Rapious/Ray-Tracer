@@ -1,4 +1,3 @@
-use camera::Camera;
 use image::{DynamicImage, GenericImage, Rgba};
 use nalgebra::{Point3, Vector3};
 use progress_bar::{
@@ -6,6 +5,9 @@ use progress_bar::{
     Style,
 };
 use rand::{thread_rng, Rng, RngCore};
+use std::time::Instant;
+
+use camera::Camera;
 use ray::Ray;
 use world::World;
 
@@ -71,6 +73,8 @@ impl Renderer {
 
         init_progress_bar(self.image_height as usize);
         set_progress_bar_action("Rendering", Color::Blue, Style::Bold);
+        let start_time = Instant::now();
+
         for y in 0..img.height() {
             inc_progress_bar();
             for x in 0..img.width() {
@@ -89,7 +93,9 @@ impl Renderer {
                 );
             }
         }
+
         finalize_progress_bar();
+        println!("Rendered in {:?}.", start_time.elapsed());
 
         img
     }
