@@ -11,7 +11,15 @@ impl Ray {
         Self { origin, direction }
     }
 
-    fn at(&self, t: f64) -> Point3<f64> {
+    pub fn origin(&self) -> &Point3<f64> {
+        &self.origin
+    }
+
+    pub fn direction(&self) -> &Vector3<f64> {
+        &self.direction
+    }
+
+    pub fn at(&self, t: f64) -> Point3<f64> {
         assert!(t > 0.0);
         self.origin + t * self.direction
     }
@@ -33,7 +41,8 @@ impl Ray {
     pub fn color(&self) -> Rgba<u8> {
         match self.hit_sphere(Point3::from([0.0, 0.0, -1.0]), 0.5) {
             Some(t) if t > 0.0 => {
-                let normal_vector = (self.at(t).coords - Vector3::from([0.0, 0.0, -1.0])).normalize();
+                let normal_vector =
+                    (self.at(t).coords - Vector3::from([0.0, 0.0, -1.0])).normalize();
                 generate_color(
                     0.5 * (normal_vector.x + 1.0),
                     0.5 * (normal_vector.y + 1.0),

@@ -8,6 +8,7 @@ use progress_bar::{
 use ray::Ray;
 
 pub mod camera;
+mod hittable;
 mod ray;
 
 /// A structure encapsulating elements to render a scene.
