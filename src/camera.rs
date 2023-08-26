@@ -16,6 +16,8 @@ impl Camera {
         camera_center: Point3<f64>,
         samples_per_pixel: usize,
     ) -> Self {
+        assert_ne!(samples_per_pixel, 0);
+
         Self {
             focal_length,
             viewport_height,

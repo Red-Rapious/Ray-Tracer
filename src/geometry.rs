@@ -27,10 +27,10 @@ impl Hittable for Sphere {
         }
 
         let discr_sqrt = discriminant.sqrt();
-        let root = (-half_b - discr_sqrt) / a;
+        let mut root = (-half_b - discr_sqrt) / a;
         if root <= t_interval.min as f64 || t_interval.max as f64 <= root {
             // First root is out of the allowed range
-            let root = (-half_b + discr_sqrt) / a;
+            root = (-half_b + discr_sqrt) / a;
             if root <= t_interval.min as f64 || t_interval.max as f64 <= root {
                 // Second root is out of the range
                 return false; // No hit in the range

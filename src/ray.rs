@@ -1,4 +1,5 @@
 use nalgebra::{Point3, Vector3};
+use rand::{Rng, RngCore};
 use real_interval::RealInterval;
 
 use crate::world::{HitRecord, World};
@@ -22,43 +23,53 @@ impl Ray {
     }
 
     pub fn at(&self, t: f64) -> Point3<f64> {
-        assert!(t > 0.0);
+        assert!(t > 0.0, "t = {t}");
         self.origin + t * self.direction
     }
 
-    pub fn color(&self, world: &World) -> Vector3<usize> {
+    pub fn color(&self, world: &World, rng: &mut dyn RngCore) -> Vector3<f64> {
         let mut hit_record = HitRecord::default();
         if world.hit(
             self,
             RealInterval::min_max(0.0, f32::INFINITY),
             &mut hit_record,
         ) {
-            generate_color(
-                0.5 * (hit_record.normal.x + 1.0),
-                0.5 * (hit_record.normal.y + 1.0),
-                0.5 * (hit_record.normal.z + 1.0),
-            )
+            let direction = random_on_hemisphere(&hit_record.normal, rng);
+            let bouncing_ray = Ray::new(hit_record.hit_point, direction);
+            0.5 * bouncing_ray.color(&world, rng)
         } else {
+            // Display a blue gradient for background.
             let unit_direction = self.direction.normalize();
             let a = 0.5 * (unit_direction.y + 1.0);
 
-            generate_color(
+            // Linear blue gradient
+            Vector3::from([
                 (1.0 - a) + a * 0.5,
                 (1.0 - a) + a * 0.7,
                 (1.0 - a) + a * 1.0,
-            )
+            ])
         }
     }
 }
 
-fn generate_color(red: f64, green: f64, blue: f64) -> Vector3<usize> {
-    assert!(0.0 <= red && red <= 1.0, "red = {red}");
-    assert!(0.0 <= green && green <= 1.0, "green = {green}");
-    assert!(0.0 <= blue && blue <= 1.0, "blue = {blue}");
+fn random_on_hemisphere(normal: &Vector3<f64>, rng: &mut dyn RngCore) -> Vector3<f64> {
+    loop {
+        let coords: [f64; 3] = [
+            rng.gen_range(-1.0..=1.0),
+            rng.gen_range(-1.0..=1.0),
+            rng.gen_range(-1.0..=1.0),
+        ];
+        let vector = Vector3::from(coords);
+        if vector.norm_squared() >= 1.0 || vector.norm_squared() == 0.0 {
+            continue;
+        }
 
-    Vector3::from([
-        (red * 255.999) as usize,
-        (green * 255.999) as usize,
-        (blue * 255.999) as usize,
-    ])
+        let vector = vector.normalize();
+
+        if vector.dot(normal) > 0.0 {
+            return vector;
+        } else {
+            return -vector;
+        }
+    }
 }

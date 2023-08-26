@@ -74,25 +74,16 @@ impl Renderer {
         for y in 0..img.height() {
             inc_progress_bar();
             for x in 0..img.width() {
-                let mut pixel_color = Vector3::from([0, 0, 0]);
-
-                // Send a given number of random rays in the same overall direction.
-                for _ in 0..self.camera.samples_per_pixel {
-                    let ray = self.random_ray(x, y, &mut rng);
-                    pixel_color += ray.color(&world);
-                }
-
-                // Take the mean of the colors retrieved by the random rays.
-                pixel_color /= self.camera.samples_per_pixel;
+                let pixel_color = self.render_pixel(x, y, &mut rng, world);
 
                 // Add the pixel to the image, after converting integers to `u8`.
                 img.put_pixel(
                     x,
                     y,
                     Rgba([
-                        pixel_color.x as u8,
-                        pixel_color.y as u8,
-                        pixel_color.z as u8,
+                        (pixel_color.x * 255.0) as u8,
+                        (pixel_color.y * 255.0) as u8,
+                        (pixel_color.z * 255.0) as u8,
                         255,
                     ]),
                 );
@@ -101,6 +92,20 @@ impl Renderer {
         finalize_progress_bar();
 
         img
+    }
+
+    fn render_pixel(&self, x: u32, y: u32, rng: &mut dyn RngCore, world: &World) -> Vector3<f64> {
+        let mut pixel_color = Vector3::from([0.0, 0.0, 0.0]);
+
+        // Send a given number of random rays in the same overall direction.
+        for _ in 0..self.camera.samples_per_pixel {
+            let ray = self.random_ray(x, y, rng);
+            pixel_color += ray.color(&world, rng);
+        }
+
+        // Take the mean of the colors retrieved by the random rays.
+        pixel_color /= self.camera.samples_per_pixel as f64;
+        pixel_color
     }
 
     /// Generates a ray corresponding to the given pixel `(x, y)`.
