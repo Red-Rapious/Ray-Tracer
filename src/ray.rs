@@ -60,11 +60,3 @@ impl Ray {
         }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    fn test() {
-        assert_eq!()
-    }
-}
