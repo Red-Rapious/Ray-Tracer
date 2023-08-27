@@ -1,4 +1,4 @@
-use lib_ray_tracer::{camera::Camera, geometry::Sphere, world::World, Renderer};
+use lib_ray_tracer::{camera::{Camera, self}, geometry::Sphere, world::World, Renderer};
 use nalgebra::Point3;
 
 fn main() {
@@ -12,6 +12,7 @@ fn main() {
         Point3::from([0.0, 0.0, 0.0]),
         100,
         10,
+        camera::Gamma::Gamma2
     );
 
     let mut world = World::empty();
@@ -21,6 +22,6 @@ fn main() {
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_image(&world);
 
-    img.save("generated_images/9_lambertian_reflection.png")
+    img.save("generated_images/10_gamma_correction.png")
         .unwrap();
 }

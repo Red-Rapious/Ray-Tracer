@@ -1,4 +1,4 @@
-use image::{DynamicImage, GenericImage, Rgba};
+use image::{DynamicImage, GenericImage};
 use nalgebra::{Point3, Vector3};
 use progress_bar::{
     finalize_progress_bar, inc_progress_bar, init_progress_bar, set_progress_bar_action, Color,
@@ -81,16 +81,7 @@ impl Renderer {
                 let pixel_color = self.render_pixel(x, y, &mut rng, world);
 
                 // Add the pixel to the image, after converting integers to `u8`.
-                img.put_pixel(
-                    x,
-                    y,
-                    Rgba([
-                        (pixel_color.x * 255.0) as u8,
-                        (pixel_color.y * 255.0) as u8,
-                        (pixel_color.z * 255.0) as u8,
-                        255,
-                    ]),
-                );
+                img.put_pixel(x, y, self.camera.color_to_pixel(pixel_color));
             }
         }
 
