@@ -21,5 +21,6 @@ fn main() {
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_image(&world);
 
-    img.save("generated_images/shadow_acne_free_diffuse.png").unwrap();
+    img.save("generated_images/shadow_acne_free_diffuse.png")
+        .unwrap();
 }

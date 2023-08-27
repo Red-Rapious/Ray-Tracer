@@ -6,7 +6,7 @@ pub struct Camera {
     pub(crate) viewport_width: f64,
     camera_center: Point3<f64>,
     pub(crate) samples_per_pixel: usize,
-    pub(crate) max_depth: usize
+    pub(crate) max_depth: usize,
 }
 
 impl Camera {
@@ -16,7 +16,7 @@ impl Camera {
         actual_ratio: f64,
         camera_center: Point3<f64>,
         samples_per_pixel: usize,
-        max_depth: usize
+        max_depth: usize,
     ) -> Self {
         assert_ne!(samples_per_pixel, 0);
 
@@ -26,7 +26,7 @@ impl Camera {
             viewport_width: viewport_height * actual_ratio,
             camera_center,
             samples_per_pixel,
-            max_depth
+            max_depth,
         }
     }
 

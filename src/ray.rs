@@ -42,7 +42,7 @@ impl Ray {
         ) {
             let direction = random_on_hemisphere(&hit_record.normal, rng);
             let bouncing_ray = Ray::new(hit_record.hit_point, direction);
-            0.5 * bouncing_ray.color(depth-1, &world, rng)
+            0.5 * bouncing_ray.color(depth - 1, &world, rng)
         } else {
             // Display a blue gradient for background.
             let unit_direction = self.direction.normalize();
