@@ -13,6 +13,7 @@ use world::World;
 
 pub mod camera;
 pub mod geometry;
+pub mod material;
 mod ray;
 pub mod world;
 

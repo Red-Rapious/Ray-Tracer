@@ -1,26 +1,30 @@
-use crate::ray::Ray;
+use crate::geometry::Hittable;
+use crate::{material::Material, ray::Ray};
 use nalgebra::{Point3, Vector3};
 use real_interval::RealInterval;
 
-/// An object hittable by a ray.
-pub trait Hittable {
-    /// Check if the given ray hits the hittable. If so, it adds informations about the hit to `hit_record`.
-    fn hit(&self, ray: &Ray, t_interval: RealInterval, hit_record: &mut HitRecord) -> bool;
-}
-
+/// Record information on the latest ray hit.
 #[derive(Default, Clone)]
 pub struct HitRecord {
     pub hit_point: Point3<f64>,
     pub normal: Vector3<f64>,
+    pub material: Material,
     pub t: f64,
     pub front_face: bool,
 }
 
 impl HitRecord {
-    pub fn new(hit_point: Point3<f64>, normal: Vector3<f64>, t: f64, front_face: bool) -> Self {
+    pub fn new(
+        hit_point: Point3<f64>,
+        normal: Vector3<f64>,
+        material: Material,
+        t: f64,
+        front_face: bool,
+    ) -> Self {
         Self {
             hit_point,
             normal,
+            material,
             t,
             front_face,
         }
@@ -46,6 +50,7 @@ impl World {
         Self { objects: vec![] }
     }
 
+    /// A a given object to the hittable list of the world.
     pub fn add(&mut self, object: impl Hittable + 'static) {
         self.objects.push(Box::new(object));
     }

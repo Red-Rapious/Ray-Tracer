@@ -1,4 +1,4 @@
-use lib_ray_tracer::{camera::{Camera, self}, geometry::Sphere, world::World, Renderer};
+use lib_ray_tracer::{camera::{Camera, self}, geometry::Sphere, world::World, Renderer, material::Material};
 use nalgebra::Point3;
 
 fn main() {
@@ -16,12 +16,12 @@ fn main() {
     );
 
     let mut world = World::empty();
-    world.add(Sphere::new(Point3::from([0.0, 0.0, -1.0]), 0.5));
-    world.add(Sphere::new(Point3::from([0.0, -100.5, -1.0]), 100.0));
+    world.add(Sphere::new(Point3::from([0.0, 0.0, -1.0]), 0.5, Material::default()));
+    world.add(Sphere::new(Point3::from([0.0, -100.5, -1.0]), 100.0, Material::default()));
 
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_image(&world);
 
-    img.save("generated_images/10_gamma_correction.png")
+    img.save("generated_images/11_first_materials.png")
         .unwrap();
 }

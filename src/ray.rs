@@ -1,9 +1,10 @@
 use nalgebra::{Point3, Vector3};
-use rand::{Rng, RngCore};
+use rand::RngCore;
 use real_interval::RealInterval;
 
 use crate::world::{HitRecord, World};
 
+#[derive(Default)]
 pub struct Ray {
     origin: Point3<f64>,
     direction: Vector3<f64>,
@@ -32,7 +33,7 @@ impl Ray {
 
         // Max depth is exceeded, the ray will stop bouncing.
         if depth == 0 {
-            return Vector3::from([0.0, 0.0, 0.0]);
+            return Vector3::zeros();
         }
 
         if world.hit(
@@ -40,49 +41,30 @@ impl Ray {
             RealInterval::min_max(0.001, f32::INFINITY), // 0.001 to limit "shadown acne"
             &mut hit_record,
         ) {
-            //let direction = random_on_hemisphere(&hit_record.normal, rng);
+            let mut bouncing_ray = Ray::default();
+            let mut attenuation = Vector3::default();
 
-            let direction = hit_record.normal + random_unit_vector(rng);
-            let bouncing_ray = Ray::new(hit_record.hit_point, direction);
-            0.5 * bouncing_ray.color(depth - 1, &world, rng)
+            let material = hit_record.material;
+            if material.scatter(self, &mut hit_record, &mut attenuation, &mut bouncing_ray, rng) {
+                attenuation.component_mul(&bouncing_ray.color(depth - 1, &world, rng))
+            } else {
+                Vector3::zeros()
+            }
         } else {
             // Display a blue gradient for background.
             let unit_direction = self.direction.normalize();
             let a = 0.5 * (unit_direction.y + 1.0);
 
             // Linear blue gradient
-            Vector3::from([
-                (1.0 - a) + a * 0.5,
-                (1.0 - a) + a * 0.7,
-                (1.0 - a) + a * 1.0,
-            ])
+            (1.0-a) * Vector3::new(1.0, 1.0, 1.0) + a * Vector3::new(0.5, 0.7, 1.0)
         }
     }
 }
 
-/// Generates a random vector on the unit sphere.
-fn random_unit_vector(rng: &mut dyn RngCore) -> Vector3<f64> {
-    loop {
-        let coords: [f64; 3] = [
-            rng.gen_range(-1.0..=1.0),
-            rng.gen_range(-1.0..=1.0),
-            rng.gen_range(-1.0..=1.0),
-        ];
-        let vector = Vector3::from(coords);
-        if vector.norm_squared() >= 1.0 || vector.norm_squared() == 0.0 {
-            continue;
-        }
-
-        return vector.normalize();
-    }
-}
-
-/// Generates a random vector on the unit sphere on the same hemisphere as the given `normal`.
-fn _random_on_hemisphere(normal: &Vector3<f64>, rng: &mut dyn RngCore) -> Vector3<f64> {
-    let vector = random_unit_vector(rng);
-    if vector.dot(normal) > 0.0 {
-        return vector;
-    } else {
-        return -vector;
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn test() {
+        assert_eq!()
     }
 }
