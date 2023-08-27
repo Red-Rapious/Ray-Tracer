@@ -40,7 +40,9 @@ impl Ray {
             RealInterval::min_max(0.001, f32::INFINITY), // 0.001 to limit "shadown acne"
             &mut hit_record,
         ) {
-            let direction = random_on_hemisphere(&hit_record.normal, rng);
+            //let direction = random_on_hemisphere(&hit_record.normal, rng);
+
+            let direction = hit_record.normal + random_unit_vector(rng);
             let bouncing_ray = Ray::new(hit_record.hit_point, direction);
             0.5 * bouncing_ray.color(depth - 1, &world, rng)
         } else {
@@ -58,7 +60,8 @@ impl Ray {
     }
 }
 
-fn random_on_hemisphere(normal: &Vector3<f64>, rng: &mut dyn RngCore) -> Vector3<f64> {
+/// Generates a random vector on the unit sphere.
+fn random_unit_vector(rng: &mut dyn RngCore) -> Vector3<f64> {
     loop {
         let coords: [f64; 3] = [
             rng.gen_range(-1.0..=1.0),
@@ -70,12 +73,16 @@ fn random_on_hemisphere(normal: &Vector3<f64>, rng: &mut dyn RngCore) -> Vector3
             continue;
         }
 
-        let vector = vector.normalize();
+        return vector.normalize();
+    }
+}
 
-        if vector.dot(normal) > 0.0 {
-            return vector;
-        } else {
-            return -vector;
-        }
+/// Generates a random vector on the unit sphere on the same hemisphere as the given `normal`.
+fn _random_on_hemisphere(normal: &Vector3<f64>, rng: &mut dyn RngCore) -> Vector3<f64> {
+    let vector = random_unit_vector(rng);
+    if vector.dot(normal) > 0.0 {
+        return vector;
+    } else {
+        return -vector;
     }
 }
