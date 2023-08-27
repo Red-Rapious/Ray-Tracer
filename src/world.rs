@@ -41,16 +41,18 @@ impl HitRecord {
     }
 }
 
+/// A wrapper of a list of hittable objects.
 pub struct World {
     objects: Vec<Box<dyn Hittable>>,
 }
 
 impl World {
+    /// Initialises an empty world.
     pub fn empty() -> Self {
         Self { objects: vec![] }
     }
 
-    /// A a given object to the hittable list of the world.
+    /// Add a given object to the hittable list of the world.
     pub fn add(&mut self, object: impl Hittable + 'static) {
         self.objects.push(Box::new(object));
     }

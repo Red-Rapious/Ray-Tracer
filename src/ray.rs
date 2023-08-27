@@ -28,6 +28,7 @@ impl Ray {
         self.origin + t * self.direction
     }
 
+    /// Computes the color of the surface hit by the ray.
     pub fn color(&self, depth: usize, world: &World, rng: &mut dyn RngCore) -> Vector3<f64> {
         let mut hit_record = HitRecord::default();
 
