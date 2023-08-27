@@ -22,11 +22,14 @@ impl Material {
         use Material::*;
         match *self {
             Lambertian(albedo) => {
-                let direction = hit_record.normal + random_unit_vector(rng);
+                let mut scatter_direction = hit_record.normal + random_unit_vector(rng);
 
-                // TODO: catch degenerate scatter direction
+                // Catch degenerate scatter direction
+                if scatter_direction.norm_squared() < 1e-8 {
+                    scatter_direction = hit_record.normal;
+                }
 
-                *scattered = Ray::new(hit_record.hit_point, direction);
+                *scattered = Ray::new(hit_record.hit_point, scatter_direction);
                 *attenuation = albedo;
                 true
             },
