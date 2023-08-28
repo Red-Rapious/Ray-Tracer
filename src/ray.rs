@@ -33,10 +33,9 @@ impl Ray {
         let mut hit_record = HitRecord::default();
 
         // Max depth is exceeded, the ray will stop bouncing.
-        if depth == 0 {
-            return Vector3::zeros();
-        }
+        if depth == 0 { return Vector3::zeros(); }
 
+        // If the ray hit an object
         if world.hit(
             self,
             RealInterval::min_max(0.001, f32::INFINITY), // 0.001 to limit "shadown acne"
@@ -44,9 +43,16 @@ impl Ray {
         ) {
             let mut bouncing_ray = Ray::default();
             let mut attenuation = Vector3::default();
-
             let material = hit_record.material;
-            if material.scatter(self, &mut hit_record, &mut attenuation, &mut bouncing_ray, rng) {
+
+            // If the 
+            if material.scatter(
+                self,
+                &hit_record,
+                &mut attenuation,
+                &mut bouncing_ray,
+                rng,
+            ) {
                 attenuation.component_mul(&bouncing_ray.color(depth - 1, &world, rng))
             } else {
                 Vector3::zeros()
@@ -57,7 +63,7 @@ impl Ray {
             let a = 0.5 * (unit_direction.y + 1.0);
 
             // Linear blue gradient
-            (1.0-a) * Vector3::new(1.0, 1.0, 1.0) + a * Vector3::new(0.5, 0.7, 1.0)
+            (1.0 - a) * Vector3::new(1.0, 1.0, 1.0) + a * Vector3::new(0.5, 0.7, 1.0)
         }
     }
 }

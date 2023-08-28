@@ -1,9 +1,9 @@
-use lib_ray_tracer::{camera::{Camera, self}, geometry::Sphere, world::World, Renderer, material::Material};
-use nalgebra::Point3;
+use lib_ray_tracer::{camera::{Camera, self}, geometry::Sphere, world::World, Renderer, material::Material::{Lambertian, Metal}};
+use nalgebra::{Point3, Vector3};
 
 fn main() {
     let aspect_ratio = 16.0 / 9.0; // TODO: compute actual_ratio
-    let image_width = 400;
+    let image_width = 1200;
 
     let camera = Camera::new(
         1.0,
@@ -15,13 +15,20 @@ fn main() {
         camera::Gamma::Gamma2
     );
 
+    let ground_mat = Lambertian(Vector3::new(0.8, 0.8, 0.0));
+    let center_mat = Lambertian(Vector3::new(0.7, 0.3, 0.3));
+    let left_mat = Metal(Vector3::new(0.8, 0.8, 0.8));
+    let right_mat = Metal(Vector3::new(0.8, 0.6, 0.2));
+
     let mut world = World::empty();
-    world.add(Sphere::new(Point3::from([0.0, 0.0, -1.0]), 0.5, Material::default()));
-    world.add(Sphere::new(Point3::from([0.0, -100.5, -1.0]), 100.0, Material::default()));
+    world.add(Sphere::new(Point3::new( 0.0, -100.5, -1.0), 100.0, ground_mat));
+    world.add(Sphere::new(Point3::new( 0.0,    0.0, -1.0),   0.5, center_mat));
+    world.add(Sphere::new(Point3::new(-1.0,    0.0, -1.0),   0.5, left_mat));
+    world.add(Sphere::new(Point3::new( 1.0,    0.0, -1.0),   0.5, right_mat));
 
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_image(&world);
 
-    img.save("generated_images/11_first_materials.png")
+    img.save("generated_images/12_metal_large.png")
         .unwrap();
 }

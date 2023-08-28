@@ -8,16 +8,19 @@ use rand::{Rng, RngCore};
 pub enum Material {
     Lambertian(Vector3<f64>),
     Hemisphere(Vector3<f64>),
+    Metal(Vector3<f64>),
 }
 
 impl Material {
+    /// If the material is diffusive, returns `true` and modifies `scattered_ray` and `attenuation`.
+    /// If the material isn't diffusive, returns `false`.
     pub fn scatter(
         &self,
-        _ray_in: &Ray,
-        hit_record: &mut HitRecord,
+        ray_in: &Ray,
+        hit_record: &HitRecord,
         attenuation: &mut Vector3<f64>,
-        scattered: &mut Ray,
-        rng: &mut dyn RngCore
+        scattered_ray: &mut Ray,
+        rng: &mut dyn RngCore,
     ) -> bool {
         use Material::*;
         match *self {
@@ -29,13 +32,19 @@ impl Material {
                     scatter_direction = hit_record.normal;
                 }
 
-                *scattered = Ray::new(hit_record.hit_point, scatter_direction);
+                *scattered_ray = Ray::new(hit_record.hit_point, scatter_direction);
                 *attenuation = albedo;
                 true
-            },
+            }
             Hemisphere(albedo) => {
                 let direction = random_on_hemisphere(&hit_record.normal, rng);
-                *scattered = Ray::new(hit_record.hit_point, direction);
+                *scattered_ray = Ray::new(hit_record.hit_point, direction);
+                *attenuation = albedo;
+                true
+            }
+            Metal(albedo) => {
+                let direction = reflect(ray_in.direction(), &hit_record.normal);
+                *scattered_ray = Ray::new(hit_record.hit_point, direction);
                 *attenuation = albedo;
                 true
             }
@@ -74,4 +83,9 @@ fn random_on_hemisphere(normal: &Vector3<f64>, rng: &mut dyn RngCore) -> Vector3
     } else {
         return -vector;
     }
+}
+
+/// Given a vector and a normal, returns the reflection of the vector on the surface represented by the normal.
+fn reflect(vector: &Vector3<f64>, normal: &Vector3<f64>) -> Vector3<f64> {
+    vector - 2.0 * vector.dot(normal) * normal
 }
