@@ -39,7 +39,11 @@ impl Renderer {
         let image_height = (image_width as f64 / aspect_ratio) as u32;
         assert!(image_height > 0);
 
-        let (viewport_width, viewport_height) = (camera.viewport_width, camera.viewport_height);
+        //let (viewport_width, viewport_height) = (camera.viewport_width, camera.viewport_height);
+        let theta = camera.vertical_fov.to_radians();
+        let h = (theta/2.0).tan();
+        let viewport_height = 2.0 * h * camera.focal_length;
+        let viewport_width = viewport_height * aspect_ratio;
 
         // Horizontal vector representing the width of the viewport.
         let viewport_u = Vector3::from([viewport_width, 0.0, 0.0]);

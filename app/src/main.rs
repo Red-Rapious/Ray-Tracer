@@ -13,11 +13,10 @@ fn main() {
 
     let camera = Camera::new(
         1.0,
-        2.0,
-        aspect_ratio,
         Point3::from([0.0, 0.0, 0.0]),
         100,
         10,
+        120.0,
         camera::Gamma::Gamma2,
     );
 
@@ -41,6 +40,6 @@ fn main() {
     //let img = renderer.render_image(&world);
     let img = renderer.render_parallel_image(&world);
 
-    img.save("generated_images/16_schlicks_approximation.png")
+    img.save("generated_images/17_fov.png")
         .unwrap();
 }
