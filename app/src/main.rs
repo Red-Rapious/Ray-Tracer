@@ -34,12 +34,13 @@ fn main() {
     ));
     world.add(Sphere::new(Point3::new(0.0, 0.0, -1.0), 0.5, center_mat));
     world.add(Sphere::new(Point3::new(-1.0, 0.0, -1.0), 0.5, left_mat));
+    world.add(Sphere::new(Point3::new(-1.0, 0.0, -1.0), -0.4, left_mat)); // hollow sphere effect
     world.add(Sphere::new(Point3::new(1.0, 0.0, -1.0), 0.5, right_mat));
 
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     //let img = renderer.render_image(&world);
     let img = renderer.render_parallel_image(&world);
 
-    img.save("generated_images/15_refraction_and_reflexion.png")
+    img.save("generated_images/16_schlicks_approximation.png")
         .unwrap();
 }

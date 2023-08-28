@@ -62,10 +62,12 @@ impl Material {
                 let unit_direction = ray_in.direction().normalize();
 
                 let cos_theta = -unit_direction.dot(&hit_record.normal);
-                let sin_theta = (1.0 - cos_theta*cos_theta).sqrt();
+                let sin_theta = (1.0 - cos_theta * cos_theta).sqrt();
 
                 // If sin(theta) is too big, there's total reflexion
-                let direction = match refraction_ratio * sin_theta <= 1.0 {
+                let direction = match refraction_ratio * sin_theta <= 1.0
+                    || reflectance(cos_theta, refraction_ratio) > rng.gen()
+                {
                     true => refract(&unit_direction, &hit_record.normal, refraction_ratio),
                     false => reflect(&unit_direction, &hit_record.normal),
                 };
@@ -124,4 +126,12 @@ fn refract(unit_vector: &Vector3<f64>, normal: &Vector3<f64>, indices_ratio: f64
     let ray_out_parallel = -(1.0 - ray_out_perp.norm_squared()).abs().sqrt() * normal;
 
     ray_out_perp + ray_out_parallel
+}
+
+/// Use Schlick's approximation to compute the reflectance.
+fn reflectance(cosine: f64, indices_ratio: f64) -> f64 {
+    let r0 = (1.0 - indices_ratio) / (1.0 + indices_ratio);
+    let r0 = r0 * r0;
+
+    r0 + (1.0 - r0) * (1.0 - cosine).powi(5)
 }
