@@ -22,11 +22,9 @@ fn main() {
     );
 
     let ground_mat = Material::Lambertian(Vector3::new(0.8, 0.8, 0.0));
-    //let center_mat = Lambertian(Vector3::new(0.7, 0.3, 0.3));
-    let center_mat = Material::Dielectric(1.5);
-    //let left_mat = Metal(Vector3::new(0.8, 0.8, 0.8), 0.3);
+    let center_mat = Material::Lambertian(Vector3::new(0.1, 0.2, 0.5));
     let left_mat = Material::Dielectric(1.5);
-    let right_mat = Material::Metal(Vector3::new(0.8, 0.6, 0.2), 1.0);
+    let right_mat = Material::Metal(Vector3::new(0.8, 0.6, 0.2), 0.0);
 
     let mut world = World::empty();
     world.add(Sphere::new(
@@ -42,6 +40,6 @@ fn main() {
     //let img = renderer.render_image(&world);
     let img = renderer.render_parallel_image(&world);
 
-    img.save("generated_images/14_pure_glass_refraction.png")
+    img.save("generated_images/15_refraction_and_reflexion.png")
         .unwrap();
 }

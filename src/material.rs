@@ -54,17 +54,23 @@ impl Material {
             }
             Dielectric(index) => {
                 *attenuation = Vector3::new(1.0, 1.0, 1.0);
-                let refraction_ration = match hit_record.front_face {
+                let refraction_ratio = match hit_record.front_face {
                     true => 1.0 / index, // ray goes from air to the dielectric
                     false => index,      // ray goes from the dielectric to the air
                 };
 
                 let unit_direction = ray_in.direction().normalize();
-                let refracted_direction =
-                    refract(&unit_direction, &hit_record.normal, refraction_ration);
 
-                *scattered_ray = Ray::new(hit_record.hit_point, refracted_direction);
+                let cos_theta = -unit_direction.dot(&hit_record.normal);
+                let sin_theta = (1.0 - cos_theta*cos_theta).sqrt();
 
+                // If sin(theta) is too big, there's total reflexion
+                let direction = match refraction_ratio * sin_theta <= 1.0 {
+                    true => refract(&unit_direction, &hit_record.normal, refraction_ratio),
+                    false => reflect(&unit_direction, &hit_record.normal),
+                };
+
+                *scattered_ray = Ray::new(hit_record.hit_point, direction);
                 true
             }
         }
