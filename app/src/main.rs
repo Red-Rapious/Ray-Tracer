@@ -2,8 +2,8 @@ use lib_ray_tracer::{camera::{Camera, self}, geometry::Sphere, world::World, Ren
 use nalgebra::{Point3, Vector3};
 
 fn main() {
-    let aspect_ratio = 16.0 / 9.0; // TODO: compute actual_ratio
-    let image_width = 400;
+    let aspect_ratio = 16.0 / 9.0;
+    let image_width = 640;
 
     let camera = Camera::new(
         1.0,
@@ -30,6 +30,6 @@ fn main() {
     //let img = renderer.render_image(&world);
     let img = renderer.render_parallel_image(&world);
 
-    img.save("generated_images/13_fuzzed_metal.png")
+    img.save("generated_images/13_fuzzed_metal_large.png")
         .unwrap();
 }

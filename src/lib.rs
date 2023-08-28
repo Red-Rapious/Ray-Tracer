@@ -1,9 +1,6 @@
 use image::{DynamicImage, GenericImage};
 use nalgebra::{Point3, Vector3};
-use progress_bar::{
-    finalize_progress_bar, inc_progress_bar, init_progress_bar, set_progress_bar_action, Color,
-    Style,
-};
+use progress_bar::*;
 use rand::{thread_rng, Rng, RngCore};
 use rayon::prelude::*;
 use std::time::Instant;
@@ -98,7 +95,7 @@ impl Renderer {
         &self,
         world: &World,
     ) -> image::ImageBuffer<image::Rgba<u8>, Vec<u8>> {
-        init_progress_bar(self.image_height as usize);
+        init_progress_bar_with_eta(self.image_height as usize);
         set_progress_bar_action("Rendering", Color::Blue, Style::Bold);
         let start_time = Instant::now();
 
@@ -125,8 +122,13 @@ impl Renderer {
             vec_image[y as usize][x as usize]
         });
 
+        print_progress_bar_final_info(
+            "Rendered",
+            format!("in {:?}", start_time.elapsed()).as_str(),
+            Color::Green,
+            Style::Bold,
+        );
         finalize_progress_bar();
-        println!("Rendered in {:?}.", start_time.elapsed());
 
         img
     }
