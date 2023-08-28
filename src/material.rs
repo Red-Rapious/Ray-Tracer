@@ -8,7 +8,7 @@ use rand::{Rng, RngCore};
 pub enum Material {
     Lambertian(Vector3<f64>),
     Hemisphere(Vector3<f64>),
-    Metal(Vector3<f64>),
+    Metal(Vector3<f64>, f64),
 }
 
 impl Material {
@@ -42,11 +42,14 @@ impl Material {
                 *attenuation = albedo;
                 true
             }
-            Metal(albedo) => {
-                let direction = reflect(ray_in.direction(), &hit_record.normal);
+            Metal(albedo, fuzz) => {
+                let direction = reflect(ray_in.direction(), &hit_record.normal)
+                    + fuzz * random_unit_vector(rng);
                 *scattered_ray = Ray::new(hit_record.hit_point, direction);
                 *attenuation = albedo;
-                true
+
+                // If the scattered ray is below the surface, absorb it (return false)
+                direction.dot(&hit_record.normal) > 0.0
             }
         }
     }

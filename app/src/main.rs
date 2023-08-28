@@ -3,7 +3,7 @@ use nalgebra::{Point3, Vector3};
 
 fn main() {
     let aspect_ratio = 16.0 / 9.0; // TODO: compute actual_ratio
-    let image_width = 1200;
+    let image_width = 400;
 
     let camera = Camera::new(
         1.0,
@@ -17,8 +17,8 @@ fn main() {
 
     let ground_mat = Lambertian(Vector3::new(0.8, 0.8, 0.0));
     let center_mat = Lambertian(Vector3::new(0.7, 0.3, 0.3));
-    let left_mat = Metal(Vector3::new(0.8, 0.8, 0.8));
-    let right_mat = Metal(Vector3::new(0.8, 0.6, 0.2));
+    let left_mat = Metal(Vector3::new(0.8, 0.8, 0.8), 0.3);
+    let right_mat = Metal(Vector3::new(0.8, 0.6, 0.2), 1.0);
 
     let mut world = World::empty();
     world.add(Sphere::new(Point3::new( 0.0, -100.5, -1.0), 100.0, ground_mat));
@@ -29,6 +29,6 @@ fn main() {
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_image(&world);
 
-    img.save("generated_images/12_metal_large.png")
+    img.save("generated_images/13_fuzzed_metal.png")
         .unwrap();
 }
