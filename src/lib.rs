@@ -5,6 +5,7 @@ use progress_bar::{
     Style,
 };
 use rand::{thread_rng, Rng, RngCore};
+use rayon::prelude::*;
 use std::time::Instant;
 
 use camera::Camera;
@@ -85,6 +86,44 @@ impl Renderer {
                 img.put_pixel(x, y, self.camera.color_to_pixel(pixel_color));
             }
         }
+
+        finalize_progress_bar();
+        println!("Rendered in {:?}.", start_time.elapsed());
+
+        img
+    }
+
+    /// Renders the image using multiple threads. Usually much faster than `render_image`.
+    pub fn render_parallel_image(
+        &self,
+        world: &World,
+    ) -> image::ImageBuffer<image::Rgba<u8>, Vec<u8>> {
+        init_progress_bar(self.image_height as usize);
+        set_progress_bar_action("Rendering", Color::Blue, Style::Bold);
+        let start_time = Instant::now();
+
+        let vec_image = (0..self.image_height)
+            .into_par_iter() // use rayon to enable multithreading
+            .map(|y| {
+                inc_progress_bar();
+
+                (0..self.image_width)
+                    .into_par_iter()
+                    .map_init(
+                        || thread_rng(),
+                        |rng, x| {
+                            let pixel_color = self.render_pixel(x, y, rng, world);
+
+                            self.camera.color_to_pixel(pixel_color)
+                        },
+                    )
+                    .collect::<Vec<image::Rgba<u8>>>()
+            })
+            .collect::<Vec<Vec<image::Rgba<u8>>>>();
+
+        let img = image::ImageBuffer::from_fn(self.image_width, self.image_height, |x, y| {
+            vec_image[y as usize][x as usize]
+        });
 
         finalize_progress_bar();
         println!("Rendered in {:?}.", start_time.elapsed());

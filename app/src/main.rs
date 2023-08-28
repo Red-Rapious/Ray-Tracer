@@ -27,7 +27,8 @@ fn main() {
     world.add(Sphere::new(Point3::new( 1.0,    0.0, -1.0),   0.5, right_mat));
 
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
-    let img = renderer.render_image(&world);
+    //let img = renderer.render_image(&world);
+    let img = renderer.render_parallel_image(&world);
 
     img.save("generated_images/13_fuzzed_metal.png")
         .unwrap();

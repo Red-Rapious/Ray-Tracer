@@ -43,7 +43,7 @@ impl HitRecord {
 
 /// A wrapper of a list of hittable objects.
 pub struct World {
-    objects: Vec<Box<dyn Hittable>>,
+    objects: Vec<Box<dyn Hittable + Sync>>,
 }
 
 impl World {
@@ -53,7 +53,7 @@ impl World {
     }
 
     /// Add a given object to the hittable list of the world.
-    pub fn add(&mut self, object: impl Hittable + 'static) {
+    pub fn add(&mut self, object: impl Hittable + 'static + Sync) {
         self.objects.push(Box::new(object));
     }
 
