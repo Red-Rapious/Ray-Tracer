@@ -9,7 +9,7 @@ use nalgebra::{Point3, Vector3};
 
 fn main() {
     let aspect_ratio = 16.0 / 9.0;
-    let image_width = 640;
+    let image_width = 854;
 
     let camera = Camera::new(
         1.0,
