@@ -13,6 +13,7 @@ pub mod camera;
 pub mod geometry;
 pub mod material;
 mod ray;
+mod utility;
 pub mod world;
 
 /// A structure encapsulating elements to render a scene.
