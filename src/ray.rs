@@ -47,7 +47,6 @@ impl Ray {
             let mut attenuation = Vector3::default();
             let material = hit_record.material;
 
-            // If the
             if material.scatter(self, &hit_record, &mut attenuation, &mut bouncing_ray, rng) {
                 attenuation.component_mul(&bouncing_ray.color(depth - 1, &world, rng))
             } else {

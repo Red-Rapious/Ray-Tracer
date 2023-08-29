@@ -12,11 +12,12 @@ fn main() {
     let image_width = 854;
 
     let camera = Camera::new(
-        1.0,
-        Point3::from([0.0, 0.0, 0.0]),
         100,
         10,
-        120.0,
+        90.0,
+        Point3::new(-2.0, 2.0, 1.0),
+        Point3::new(0.0, 0.0, -1.0),
+        Vector3::new(0.0, 1.0, 0.0),
         camera::Gamma::Gamma2,
     );
 
@@ -40,6 +41,5 @@ fn main() {
     //let img = renderer.render_image(&world);
     let img = renderer.render_parallel_image(&world);
 
-    img.save("generated_images/17_fov.png")
-        .unwrap();
+    img.save("generated_images/18_camera_position.png").unwrap();
 }

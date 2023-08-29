@@ -41,21 +41,22 @@ impl Renderer {
 
         //let (viewport_width, viewport_height) = (camera.viewport_width, camera.viewport_height);
         let theta = camera.vertical_fov.to_radians();
-        let h = (theta/2.0).tan();
+        let h = (theta / 2.0).tan();
         let viewport_height = 2.0 * h * camera.focal_length;
         let viewport_width = viewport_height * aspect_ratio;
 
         // Horizontal vector representing the width of the viewport.
-        let viewport_u = Vector3::from([viewport_width, 0.0, 0.0]);
+        let viewport_u = viewport_width * camera.basis.u;
         // Vertical descending vector representing the height of the viewport.
-        let viewport_v = Vector3::from([0.0, -viewport_height, 0.0]);
+        let viewport_v = -viewport_height * camera.basis.v;
 
         let pixel_delta_u = viewport_u / image_width as f64;
         let pixel_delta_v = viewport_v / image_height as f64;
 
         let viewport_upper_left = camera.center()
-            - Vector3::from([0.0, 0.0, camera.focal_length])
-            - 0.5 * (viewport_u + viewport_v);
+            - (camera.focal_length * camera.basis.w)
+            - viewport_u / 2.0
+            - viewport_v / 2.0;
 
         let upper_left_pixel = viewport_upper_left + 0.5 * (pixel_delta_u + pixel_delta_v);
 
