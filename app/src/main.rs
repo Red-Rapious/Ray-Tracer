@@ -13,12 +13,14 @@ fn main() {
 
     let camera = Camera::new(
         100,
-        10,
-        90.0,
+        50,
+        20.0,
         Point3::new(-2.0, 2.0, 1.0),
         Point3::new(0.0, 0.0, -1.0),
         Vector3::new(0.0, 1.0, 0.0),
         camera::Gamma::Gamma2,
+        10.0,
+        3.4,
     );
 
     let ground_mat = Material::Lambertian(Vector3::new(0.8, 0.8, 0.0));
@@ -41,5 +43,5 @@ fn main() {
     //let img = renderer.render_image(&world);
     let img = renderer.render_parallel_image(&world);
 
-    img.save("generated_images/18_camera_position.png").unwrap();
+    img.save("generated_images/19_defocus_blur.png").unwrap();
 }

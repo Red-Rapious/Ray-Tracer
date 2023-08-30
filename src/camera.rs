@@ -1,17 +1,22 @@
+use crate::utility::{random_in_unit_disk, Basis2, Basis3};
+
 use image::Rgba;
 use nalgebra::{Point3, Vector3};
+use rand::RngCore;
 
 pub struct Camera {
-    /// The simulated focal length.
-    pub(crate) focal_length: f64,
+    /// The simulated focus distance. Objects at this distance from the Camera won't be affected by defocus blur.
+    pub(crate) focus_distance: f64,
     /// The number of rays send per pixel.
     pub(crate) samples_per_pixel: usize,
     /// The maximum number of times that a ray can bounce.
     pub(crate) max_depth: usize,
     /// The vertical field of view, in degrees.
     pub(crate) vertical_fov: f64,
-    /// An orthonormal basis describing the viewport.
-    pub(crate) basis: Basis<f64>,
+    /// A 3D orthonormal basis describing the viewport.
+    pub(crate) frame_basis: Basis3<f64>,
+    /// A 2D basis describing the defocus disk.
+    pub(crate) disk_basis: Basis2<f64>,
     /// The center of the camera, the point from where the rays are emitted.
     center: Point3<f64>,
     /// The type of gamma correction applied to the image.
@@ -27,24 +32,34 @@ impl Camera {
         look_at: Point3<f64>,
         up_direction: Vector3<f64>,
         gamma: Gamma,
+        defocus_angle: f64,
+        focus_distance: f64,
     ) -> Self {
         assert_ne!(samples_per_pixel, 0);
+        assert!(0.0 <= vertical_fov && vertical_fov < 360.0);
+        assert!(0.0 <= defocus_angle && defocus_angle < 360.0);
+        assert_ne!(look_from, look_at);
+        assert!(focus_distance > 0.0);
 
-        let focal_length = (look_from - look_at).norm();
         let w = (look_from - look_at).normalize();
         let u = up_direction.cross(&w).normalize();
         let v = w.cross(&u);
 
-        let basis = Basis::new(u, v, w);
+        let frame_basis = Basis3::new(u, v, w);
+
+        // Calculate the camera defocus disk basis
+        let defocus_radius = focus_distance * (defocus_angle / 2.0).to_radians().tan();
+        let disk_basis = Basis2::new(defocus_radius * u, defocus_radius * v);
 
         Self {
-            focal_length,
+            focus_distance,
             samples_per_pixel,
             max_depth,
             vertical_fov,
             gamma,
-            basis,
+            frame_basis,
             center: look_from,
+            disk_basis,
         }
     }
 
@@ -63,21 +78,17 @@ impl Camera {
             ]),
         }
     }
+
+    pub fn defocus_disk_sample(&self, rng: &mut dyn RngCore) -> Point3<f64> {
+        if self.disk_basis.u == Vector3::zeros() {
+            self.center
+        } else {
+            let p = random_in_unit_disk(rng);
+            self.center + self.disk_basis.u * p.x + self.disk_basis.v * p.y
+        }
+    }
 }
 
 pub enum Gamma {
     Gamma2,
-}
-
-/// A 3-dimensional basis, containing 3 base vectors, `u`, `v`, and `w`.
-pub struct Basis<T> {
-    pub u: Vector3<T>,
-    pub v: Vector3<T>,
-    pub w: Vector3<T>,
-}
-
-impl<T> Basis<T> {
-    pub fn new(u: Vector3<T>, v: Vector3<T>, w: Vector3<T>) -> Self {
-        Self { u, v, w }
-    }
 }

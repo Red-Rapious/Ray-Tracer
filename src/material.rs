@@ -1,6 +1,6 @@
 use crate::ray::Ray;
-use crate::world::HitRecord;
 use crate::utility::*;
+use crate::world::HitRecord;
 
 use nalgebra::Vector3;
 use rand::{Rng, RngCore};

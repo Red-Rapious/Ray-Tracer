@@ -43,19 +43,19 @@ impl Renderer {
         //let (viewport_width, viewport_height) = (camera.viewport_width, camera.viewport_height);
         let theta = camera.vertical_fov.to_radians();
         let h = (theta / 2.0).tan();
-        let viewport_height = 2.0 * h * camera.focal_length;
+        let viewport_height = 2.0 * h * camera.focus_distance;
         let viewport_width = viewport_height * aspect_ratio;
 
         // Horizontal vector representing the width of the viewport.
-        let viewport_u = viewport_width * camera.basis.u;
+        let viewport_u = viewport_width * camera.frame_basis.u;
         // Vertical descending vector representing the height of the viewport.
-        let viewport_v = -viewport_height * camera.basis.v;
+        let viewport_v = -viewport_height * camera.frame_basis.v;
 
         let pixel_delta_u = viewport_u / image_width as f64;
         let pixel_delta_v = viewport_v / image_height as f64;
 
         let viewport_upper_left = camera.center()
-            - (camera.focal_length * camera.basis.w)
+            - (camera.focus_distance * camera.frame_basis.w)
             - viewport_u / 2.0
             - viewport_v / 2.0;
 
@@ -155,6 +155,7 @@ impl Renderer {
 
     /// Generates a ray corresponding to the given pixel `(x, y)`.
     /// To the standard direction of the ray is added some random noise to have different samples.
+    /// The ray is originating from the camera defocus disk.
     fn random_ray(&self, x: u32, y: u32, rng: &mut dyn RngCore) -> Ray {
         // The center of the square pixel.
         let pixel_center = self.upper_left_pixel
@@ -163,9 +164,10 @@ impl Renderer {
         // A random point of the square pixel.
         let pixel_sample = pixel_center + self.pixel_sample_square(rng);
         // Vector pointing from the camera towards the random point of the pixel.
-        let ray_direction = pixel_sample - self.camera.center();
+        let origin = self.camera.defocus_disk_sample(rng);
+        let ray_direction = pixel_sample - origin;
 
-        Ray::new(*self.camera.center(), ray_direction)
+        Ray::new(origin, ray_direction)
     }
 
     /// Generates a vector from the center of the pixel to a random point of the square pixel.
