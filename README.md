@@ -4,7 +4,7 @@ A simple Ray Tracer, using path tracing and written in Rust.
 ## About
 This project is based on [the book by Peter Shirley, *Ray Tracing in One Weekend*](https://raytracing.github.io/books/RayTracingInOneWeekend.html). It is nevertheless using C++ as a main language, so I adapted the original code snippets to Rust.
 
-![Latest rendered image](app/generated_images/13_fuzzed_metal_4K.png)
+![Latest rendered image](app/generated_images/20_final_render.png)
 
 ## Running
 Run the current code from the project's root with the following commands:
