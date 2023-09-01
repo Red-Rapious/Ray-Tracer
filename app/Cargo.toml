@@ -10,3 +10,4 @@ image = "0.24.7"
 lib-ray-tracer = { path = "../" }
 nalgebra = "0.32.3"
 rand = "0.8.5"
+speedy2d = "1.12.0"

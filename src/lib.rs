@@ -139,6 +139,38 @@ impl Renderer {
         img
     }
 
+    /// Renders the image using multiple threads for real-time use.
+    pub fn render_parallel_image_data(
+        &self,
+        world: &World,
+    ) -> Vec<u8> {
+        let vec_image = (0..self.image_height)
+            .into_par_iter() // use rayon to enable multithreading
+            .map(|y| {
+                (0..self.image_width)
+                    .into_par_iter()
+                    .map_init(
+                        || thread_rng(),
+                        |rng, x| {
+                            let pixel_color = self.render_pixel(x, y, rng, world);
+
+                            vec![
+                                    (pixel_color.x.sqrt() * 255.0) as u8,
+                                    (pixel_color.y.sqrt() * 255.0) as u8,
+                                    (pixel_color.z.sqrt() * 255.0) as u8,
+                                    255,
+                            ]
+                        },
+                    )
+                    .flatten()
+                    .collect::<Vec<u8>>()
+            })
+            .flatten()
+            .collect::<Vec<u8>>();
+
+        vec_image
+    }
+
     fn render_pixel(&self, x: u32, y: u32, rng: &mut dyn RngCore, world: &World) -> Vector3<f64> {
         let mut pixel_color = Vector3::from([0.0, 0.0, 0.0]);
 
