@@ -23,7 +23,7 @@ pub struct Renderer {
     /// The height of the rendered image, computed using the width and ratio.
     image_height: u32,
     /// The camera used for rendering.
-    camera: Camera,
+    pub camera: Camera,
     /// The world's coordinates of the upper left pixel of the viewport.
     upper_left_pixel: Point3<f64>,
     /// The vector representing the horizontal spacing between two centers of pixels.
@@ -54,7 +54,7 @@ impl Renderer {
         let pixel_delta_u = viewport_u / image_width as f64;
         let pixel_delta_v = viewport_v / image_height as f64;
 
-        let viewport_upper_left = camera.center()
+        let viewport_upper_left = camera.center
             - (camera.focus_distance * camera.frame_basis.w)
             - viewport_u / 2.0
             - viewport_v / 2.0;

@@ -18,7 +18,7 @@ pub struct Camera {
     /// A 2D basis describing the defocus disk.
     pub(crate) disk_basis: Basis2<f64>,
     /// The center of the camera, the point from where the rays are emitted.
-    center: Point3<f64>,
+    pub center: Point3<f64>,
     /// The type of gamma correction applied to the image.
     gamma: Gamma,
 }
@@ -61,10 +61,6 @@ impl Camera {
             center: look_from,
             disk_basis,
         }
-    }
-
-    pub fn center(&self) -> &Point3<f64> {
-        &self.center
     }
 
     /// Converts a vector of 3 floats to a color, `image::Rgba<u8>`.

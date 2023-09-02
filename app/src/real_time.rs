@@ -12,10 +12,6 @@ use speedy2d::shape::Rectangle;
 use speedy2d::window::{VirtualKeyCode, WindowHandler, WindowHelper};
 use speedy2d::Graphics2D;
 use speedy2d::Window;
-//use std::{thread, time};
-
-/// Minimum time between two frames of the simulation, in milliseconds
-//const DELTA: u64 = 30;
 
 const UPSCALE: u32 = 5;
 
@@ -113,7 +109,10 @@ impl WindowHandler for RealTimeRenderer {
         graphics.draw_rectangle_image(
             Rectangle::new(
                 Vec2::new(0.0, 0.0),
-                Vec2::new((self.size.0 * UPSCALE) as f32, (self.size.1 * UPSCALE) as f32),
+                Vec2::new(
+                    (self.size.0 * UPSCALE) as f32,
+                    (self.size.1 * UPSCALE) as f32,
+                ),
             ),
             &handle,
         );
@@ -130,7 +129,19 @@ impl WindowHandler for RealTimeRenderer {
         virtual_key_code: Option<VirtualKeyCode>,
         _: speedy2d::window::KeyScancode,
     ) {
-        if virtual_key_code == Some(VirtualKeyCode::Space) {}
+        if virtual_key_code == Some(VirtualKeyCode::Q) {
+            self.renderer.camera.center += Vector3::new(-1.0, 0.0, 0.0);
+        } else if virtual_key_code == Some(VirtualKeyCode::D) {
+            self.renderer.camera.center += Vector3::new(1.0, 0.0, 0.0);
+        } else if virtual_key_code == Some(VirtualKeyCode::Z) {
+            self.renderer.camera.center += Vector3::new(0.0, 0.0, 1.0);
+        } else if virtual_key_code == Some(VirtualKeyCode::S) {
+            self.renderer.camera.center += Vector3::new(0.0, 0.0, -1.0);
+        } else if virtual_key_code == Some(VirtualKeyCode::Space) {
+            self.renderer.camera.center += Vector3::new(0.0, 1.0, 0.0);
+        } else if virtual_key_code == Some(VirtualKeyCode::LShift) {
+            self.renderer.camera.center += Vector3::new(0.0, -1.0, 0.0);
+        }
     }
 
     fn on_mouse_move(&mut self, _: &mut WindowHelper<()>, position: Vec2) {
