@@ -1,6 +1,3 @@
-use speedy2d::color::Color;
-use speedy2d::dimen::Vec2;
-//use speedy2d::shape::Rectangle;
 use lib_ray_tracer::{
     camera::{self, Camera},
     geometry::Sphere,
@@ -9,6 +6,9 @@ use lib_ray_tracer::{
     Renderer,
 };
 use nalgebra::{Point3, Vector3};
+use speedy2d::color::Color;
+use speedy2d::dimen::Vec2;
+use speedy2d::shape::Rectangle;
 use speedy2d::window::{VirtualKeyCode, WindowHandler, WindowHelper};
 use speedy2d::Graphics2D;
 use speedy2d::Window;
@@ -16,6 +16,8 @@ use speedy2d::Window;
 
 /// Minimum time between two frames of the simulation, in milliseconds
 //const DELTA: u64 = 30;
+
+const UPSCALE: u32 = 5;
 
 pub fn run() {
     let aspect_ratio = 16.0 / 9.0;
@@ -53,7 +55,10 @@ pub fn run() {
 
     let window = Window::new_centered(
         "Ray Tracer",
-        (image_width, (image_width as f64 / aspect_ratio) as u32),
+        (
+            image_width * UPSCALE,
+            (image_width as f64 / aspect_ratio) as u32 * UPSCALE,
+        ),
     )
     .unwrap();
     window.run_loop(RealTimeRenderer::new(
@@ -69,7 +74,7 @@ struct RealTimeRenderer {
     renderer: Renderer,
     mouse_position: Vec2,
     world: World,
-    last_frame: std::time::Instant
+    last_frame: std::time::Instant,
 }
 
 impl RealTimeRenderer {
@@ -79,7 +84,7 @@ impl RealTimeRenderer {
             renderer: Renderer::new(aspect_ratio, image_width, camera),
             mouse_position: Vec2::new(0.0, 0.0),
             world,
-            last_frame: std::time::Instant::now()
+            last_frame: std::time::Instant::now(),
         }
     }
 }
@@ -105,7 +110,13 @@ impl WindowHandler for RealTimeRenderer {
             )
             .unwrap();
 
-        graphics.draw_image(Vec2::new(0.0, 0.0), &handle);
+        graphics.draw_rectangle_image(
+            Rectangle::new(
+                Vec2::new(0.0, 0.0),
+                Vec2::new((self.size.0 * UPSCALE) as f32, (self.size.1 * UPSCALE) as f32),
+            ),
+            &handle,
+        );
         //graphics.draw_text((0.0, 0.0), Color::BLACK, format!("{:?}", self.last_frame.elapsed()));
         //println!("{:?}", self.last_frame.elapsed());
         self.last_frame = std::time::Instant::now();
