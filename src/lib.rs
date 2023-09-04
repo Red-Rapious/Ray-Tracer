@@ -199,7 +199,9 @@ impl Renderer {
         let origin = self.camera.defocus_disk_sample(rng);
         let ray_direction = pixel_sample - origin;
 
-        Ray::new(origin, ray_direction)
+        let time = rng.gen();
+
+        Ray::new(origin, ray_direction, time)
     }
 
     /// Generates a vector from the center of the pixel to a random point of the square pixel.

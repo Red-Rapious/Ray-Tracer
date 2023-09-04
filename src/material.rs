@@ -34,20 +34,20 @@ impl Material {
                     scatter_direction = hit_record.normal;
                 }
 
-                *scattered_ray = Ray::new(hit_record.hit_point, scatter_direction);
+                *scattered_ray = Ray::new(hit_record.hit_point, scatter_direction, ray_in.time());
                 *attenuation = albedo;
                 true
             }
             Hemisphere(albedo) => {
                 let direction = random_on_hemisphere(&hit_record.normal, rng);
-                *scattered_ray = Ray::new(hit_record.hit_point, direction);
+                *scattered_ray = Ray::new(hit_record.hit_point, direction, ray_in.time());
                 *attenuation = albedo;
                 true
             }
             Metal(albedo, fuzz) => {
                 let direction = reflect(ray_in.direction(), &hit_record.normal)
                     + fuzz * random_unit_vector(rng);
-                *scattered_ray = Ray::new(hit_record.hit_point, direction);
+                *scattered_ray = Ray::new(hit_record.hit_point, direction, ray_in.time());
                 *attenuation = albedo;
 
                 // If the scattered ray is below the surface, absorb it (return false)
@@ -73,7 +73,7 @@ impl Material {
                     false => reflect(&unit_direction, &hit_record.normal),
                 };
 
-                *scattered_ray = Ray::new(hit_record.hit_point, direction);
+                *scattered_ray = Ray::new(hit_record.hit_point, direction, ray_in.time());
                 true
             }
         }

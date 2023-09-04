@@ -2,7 +2,7 @@ use crate::material::Material;
 use crate::ray::Ray;
 use crate::world::HitRecord;
 
-use nalgebra::Point3;
+use nalgebra::{Point3, Vector3};
 use real_interval::RealInterval;
 
 /// An object hittable by a ray.
@@ -13,24 +13,46 @@ pub trait Hittable {
 
 /// A basic Sphere geometry.
 pub struct Sphere {
-    center: Point3<f64>,
+    center1: Point3<f64>,
     radius: f64,
     material: Material,
+    is_moving: bool,
+    center_vec: Vector3<f64>,
 }
 
 impl Sphere {
-    pub fn new(center: Point3<f64>, radius: f64, material: Material) -> Self {
+    pub fn stationary(center: Point3<f64>, radius: f64, material: Material) -> Self {
         Self {
-            center,
+            center1: center,
             radius,
             material,
+            is_moving: false,
+            center_vec: Vector3::zeros(),
+        }
+    }
+
+    pub fn moving(center1: Point3<f64>, center2: Point3<f64>, radius: f64, material: Material) -> Self {
+        Self {
+            center1,
+            radius,
+            material,
+            is_moving: true,
+            center_vec: center2 - center1,
+        }
+    }
+
+    fn center(&self, time: f64) -> Point3<f64> {
+        if self.is_moving {
+            self.center1 + time * self.center_vec
+        } else {
+            self.center1
         }
     }
 }
 
 impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, t_interval: RealInterval, hit_record: &mut HitRecord) -> bool {
-        let origin_to_center = ray.origin() - self.center;
+        let origin_to_center = ray.origin() - self.center(ray.time());
         let a = ray.direction().norm_squared();
         let half_b = origin_to_center.dot(&ray.direction());
         let c = origin_to_center.norm_squared() - self.radius * self.radius;
@@ -60,7 +82,7 @@ impl Hittable for Sphere {
         hit_record.hit_point = ray.at(hit_record.t);
         hit_record.material = self.material;
 
-        let outward_normal = (hit_record.hit_point - self.center) / self.radius;
+        let outward_normal = (hit_record.hit_point - self.center(ray.time())) / self.radius;
         hit_record.set_face_normal(ray, &outward_normal);
 
         true // there's a hit
