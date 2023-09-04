@@ -10,10 +10,10 @@ use rand::{thread_rng, Rng};
 
 pub fn render() {
     let aspect_ratio = 16.0 / 9.0;
-    let image_width = 1920;
+    let image_width = 426;
 
     let camera = Camera::new(
-        100,
+        50,
         50,
         20.0,
         Point3::new(13.0, 2.0, 3.0),
@@ -85,5 +85,5 @@ pub fn render() {
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_parallel_image(&world);
 
-    img.save("generated_images/20_final_render.png").unwrap();
+    img.save("generated_images/test.png").unwrap();
 }
