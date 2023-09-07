@@ -31,7 +31,12 @@ impl Sphere {
         }
     }
 
-    pub fn moving(center1: Point3<f64>, center2: Point3<f64>, radius: f64, material: Material) -> Self {
+    pub fn moving(
+        center1: Point3<f64>,
+        center2: Point3<f64>,
+        radius: f64,
+        material: Material,
+    ) -> Self {
         Self {
             center1,
             radius,
@@ -54,7 +59,7 @@ impl Hittable for Sphere {
     fn hit(&self, ray: &Ray, t_interval: RealInterval, hit_record: &mut HitRecord) -> bool {
         let origin_to_center = ray.origin() - self.center(ray.time());
         let a = ray.direction().norm_squared();
-        let half_b = origin_to_center.dot(&ray.direction());
+        let half_b = origin_to_center.dot(ray.direction());
         let c = origin_to_center.norm_squared() - self.radius * self.radius;
         let discriminant = half_b * half_b - a * c;
 

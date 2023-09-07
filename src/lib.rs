@@ -113,7 +113,7 @@ impl Renderer {
                 (0..self.image_width)
                     .into_par_iter()
                     .map_init(
-                        || thread_rng(),
+                        thread_rng,
                         |rng, x| {
                             let pixel_color = self.render_pixel(x, y, rng, world);
 
@@ -140,25 +140,22 @@ impl Renderer {
     }
 
     /// Renders the image using multiple threads for real-time use.
-    pub fn render_parallel_image_data(
-        &self,
-        world: &World,
-    ) -> Vec<u8> {
-        let vec_image = (0..self.image_height)
+    pub fn render_parallel_image_data(&self, world: &World) -> Vec<u8> {
+        (0..self.image_height)
             .into_par_iter() // use rayon to enable multithreading
             .map(|y| {
                 (0..self.image_width)
                     .into_par_iter()
                     .map_init(
-                        || thread_rng(),
+                        thread_rng,
                         |rng, x| {
                             let pixel_color = self.render_pixel(x, y, rng, world);
 
                             vec![
-                                    (pixel_color.x.sqrt() * 255.0) as u8,
-                                    (pixel_color.y.sqrt() * 255.0) as u8,
-                                    (pixel_color.z.sqrt() * 255.0) as u8,
-                                    255,
+                                (pixel_color.x.sqrt() * 255.0) as u8,
+                                (pixel_color.y.sqrt() * 255.0) as u8,
+                                (pixel_color.z.sqrt() * 255.0) as u8,
+                                255,
                             ]
                         },
                     )
@@ -166,9 +163,7 @@ impl Renderer {
                     .collect::<Vec<u8>>()
             })
             .flatten()
-            .collect::<Vec<u8>>();
-
-        vec_image
+            .collect::<Vec<u8>>()
     }
 
     fn render_pixel(&self, x: u32, y: u32, rng: &mut dyn RngCore, world: &World) -> Vector3<f64> {
@@ -177,7 +172,7 @@ impl Renderer {
         // Send a given number of random rays in the same overall direction.
         for _ in 0..self.camera.samples_per_pixel {
             let ray = self.random_ray(x, y, rng);
-            pixel_color += ray.color(self.camera.max_depth, &world, rng);
+            pixel_color += ray.color(self.camera.max_depth, world, rng);
         }
 
         // Take the mean of the colors retrieved by the random rays.

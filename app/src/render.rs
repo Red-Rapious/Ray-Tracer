@@ -86,5 +86,5 @@ pub fn render() {
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_parallel_image(&world);
 
-    img.save("generated_images/21_motion_blur.png").unwrap();
+    img.save("generated_images/test.png").unwrap();
 }

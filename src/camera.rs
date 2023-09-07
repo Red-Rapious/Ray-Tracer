@@ -36,8 +36,8 @@ impl Camera {
         focus_distance: f64,
     ) -> Self {
         assert_ne!(samples_per_pixel, 0);
-        assert!(0.0 <= vertical_fov && vertical_fov < 360.0);
-        assert!(0.0 <= defocus_angle && defocus_angle < 360.0);
+        assert!((0.0..360.0).contains(&vertical_fov));
+        assert!((0.0..360.0).contains(&defocus_angle));
         assert_ne!(look_from, look_at);
         assert!(focus_distance > 0.0);
 

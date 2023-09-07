@@ -8,12 +8,16 @@ use crate::world::{HitRecord, World};
 pub struct Ray {
     origin: Point3<f64>,
     direction: Vector3<f64>,
-    time: f64
+    time: f64,
 }
 
 impl Ray {
     pub fn new(origin: Point3<f64>, direction: Vector3<f64>, time: f64) -> Self {
-        Self { origin, direction, time }
+        Self {
+            origin,
+            direction,
+            time,
+        }
     }
 
     pub fn origin(&self) -> &Point3<f64> {
@@ -53,7 +57,7 @@ impl Ray {
             let material = hit_record.material;
 
             if material.scatter(self, &hit_record, &mut attenuation, &mut bouncing_ray, rng) {
-                attenuation.component_mul(&bouncing_ray.color(depth - 1, &world, rng))
+                attenuation.component_mul(&bouncing_ray.color(depth - 1, world, rng))
             } else {
                 Vector3::zeros()
             }

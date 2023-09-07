@@ -22,9 +22,9 @@ pub fn random_unit_vector(rng: &mut dyn RngCore) -> Vector3<f64> {
 pub fn random_on_hemisphere(normal: &Vector3<f64>, rng: &mut dyn RngCore) -> Vector3<f64> {
     let vector = random_unit_vector(rng);
     if vector.dot(normal) > 0.0 {
-        return vector;
+        vector
     } else {
-        return -vector;
+        -vector
     }
 }
 
