@@ -9,6 +9,7 @@ use camera::Camera;
 use ray::Ray;
 use world::World;
 
+mod aabb;
 pub mod camera;
 pub mod geometry;
 pub mod material;
