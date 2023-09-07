@@ -16,7 +16,7 @@ impl AABB {
         Self { x, y, z }
     }
 
-    pub fn from_points(a: &Point3<f64>, b: &Point3<f64>) -> Self {
+    pub fn from_points(a: Point3<f64>, b: Point3<f64>) -> Self {
         Self {
             x: RealInterval {
                 min: a.x.min(b.x) as f32,
@@ -30,6 +30,23 @@ impl AABB {
                 min: a.x.min(b.z) as f32,
                 max: a.x.max(b.z) as f32,
             },
+        }
+    }
+
+    pub fn from_boxes(box0: AABB, box1: AABB) -> Self {
+        Self {
+            x: RealInterval {
+                min: box0.x.min.min(box0.x.min),
+                max: box1.x.max.max(box1.x.max),
+            },
+            y: RealInterval {
+                min: box0.y.min.min(box0.y.min),
+                max: box1.y.max.max(box1.y.max),
+            },
+            z: RealInterval {
+                min: box0.z.min.min(box0.z.min),
+                max: box1.z.max.max(box1.z.max),
+            }
         }
     }
 

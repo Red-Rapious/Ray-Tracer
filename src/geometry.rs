@@ -1,6 +1,7 @@
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::world::HitRecord;
+use crate::aabb::AABB;
 
 use nalgebra::{Point3, Vector3};
 use real_interval::RealInterval;
@@ -9,6 +10,7 @@ use real_interval::RealInterval;
 pub trait Hittable {
     /// Check if the given ray hits the hittable. If so, it adds informations about the hit to `hit_record`.
     fn hit(&self, ray: &Ray, t_interval: RealInterval, hit_record: &mut HitRecord) -> bool;
+    fn bounding_box(&self) -> &AABB;
 }
 
 /// A basic Sphere geometry.
@@ -18,16 +20,19 @@ pub struct Sphere {
     material: Material,
     is_moving: bool,
     center_vec: Vector3<f64>,
+    bbox: AABB,
 }
 
 impl Sphere {
     pub fn stationary(center: Point3<f64>, radius: f64, material: Material) -> Self {
+        let radius_vector = Vector3::new(radius, radius, radius);
         Self {
             center1: center,
             radius,
             material,
             is_moving: false,
             center_vec: Vector3::zeros(),
+            bbox: AABB::from_points(center - radius_vector, center + radius_vector)
         }
     }
 
@@ -37,12 +42,17 @@ impl Sphere {
         radius: f64,
         material: Material,
     ) -> Self {
+        let radius_vector = Vector3::new(radius, radius, radius);
+        let bbox1 = AABB::from_points(center1 - radius_vector, center1 + radius_vector);
+        let bbox2 = AABB::from_points(center2 - radius_vector, center2 + radius_vector);
+
         Self {
             center1,
             radius,
             material,
             is_moving: true,
             center_vec: center2 - center1,
+            bbox: AABB::from_boxes(bbox1, bbox2)
         }
     }
 
@@ -91,5 +101,9 @@ impl Hittable for Sphere {
         hit_record.set_face_normal(ray, &outward_normal);
 
         true // there's a hit
+    }
+
+    fn bounding_box(&self) -> &AABB {
+        &self.bbox
     }
 }
