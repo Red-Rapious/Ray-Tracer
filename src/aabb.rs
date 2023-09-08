@@ -33,7 +33,7 @@ impl AABB {
         }
     }
 
-    pub fn from_boxes(box0: AABB, box1: AABB) -> Self {
+    pub fn from_boxes(box0: &AABB, box1: &AABB) -> Self {
         Self {
             x: RealInterval {
                 min: box0.x.min.min(box0.x.min),
@@ -46,7 +46,7 @@ impl AABB {
             z: RealInterval {
                 min: box0.z.min.min(box0.z.min),
                 max: box1.z.max.max(box1.z.max),
-            }
+            },
         }
     }
 
@@ -59,10 +59,11 @@ impl AABB {
         }
     }
 
-    pub fn hit(&self, r: &Ray, t_interval: &mut RealInterval) -> bool {
+    pub fn hit(&self, ray: &Ray, t_interval: RealInterval) -> bool {
+        let mut t_interval = t_interval;
         for axis in 0..3 {
-            let d_invert = 1.0 / r.direction()[axis];
-            let origin = r.origin()[axis];
+            let d_invert = 1.0 / ray.direction()[axis];
+            let origin = ray.origin()[axis];
 
             let mut t0 = ((self.axis(axis).min as f64 - origin) * d_invert) as f32;
             let mut t1 = ((self.axis(axis).max as f64 - origin) * d_invert) as f32;

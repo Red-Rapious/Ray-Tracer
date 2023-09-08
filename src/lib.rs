@@ -10,6 +10,7 @@ use ray::Ray;
 use world::World;
 
 mod aabb;
+mod bvh;
 pub mod camera;
 pub mod geometry;
 pub mod material;
@@ -113,14 +114,11 @@ impl Renderer {
 
                 (0..self.image_width)
                     .into_par_iter()
-                    .map_init(
-                        thread_rng,
-                        |rng, x| {
-                            let pixel_color = self.render_pixel(x, y, rng, world);
+                    .map_init(thread_rng, |rng, x| {
+                        let pixel_color = self.render_pixel(x, y, rng, world);
 
-                            self.camera.color_to_pixel(pixel_color)
-                        },
-                    )
+                        self.camera.color_to_pixel(pixel_color)
+                    })
                     .collect::<Vec<image::Rgba<u8>>>()
             })
             .collect::<Vec<Vec<image::Rgba<u8>>>>();
@@ -147,19 +145,16 @@ impl Renderer {
             .map(|y| {
                 (0..self.image_width)
                     .into_par_iter()
-                    .map_init(
-                        thread_rng,
-                        |rng, x| {
-                            let pixel_color = self.render_pixel(x, y, rng, world);
+                    .map_init(thread_rng, |rng, x| {
+                        let pixel_color = self.render_pixel(x, y, rng, world);
 
-                            vec![
-                                (pixel_color.x.sqrt() * 255.0) as u8,
-                                (pixel_color.y.sqrt() * 255.0) as u8,
-                                (pixel_color.z.sqrt() * 255.0) as u8,
-                                255,
-                            ]
-                        },
-                    )
+                        vec![
+                            (pixel_color.x.sqrt() * 255.0) as u8,
+                            (pixel_color.y.sqrt() * 255.0) as u8,
+                            (pixel_color.z.sqrt() * 255.0) as u8,
+                            255,
+                        ]
+                    })
                     .flatten()
                     .collect::<Vec<u8>>()
             })

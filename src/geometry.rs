@@ -1,7 +1,7 @@
+use crate::aabb::AABB;
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::world::HitRecord;
-use crate::aabb::AABB;
 
 use nalgebra::{Point3, Vector3};
 use real_interval::RealInterval;
@@ -32,7 +32,7 @@ impl Sphere {
             material,
             is_moving: false,
             center_vec: Vector3::zeros(),
-            bbox: AABB::from_points(center - radius_vector, center + radius_vector)
+            bbox: AABB::from_points(center - radius_vector, center + radius_vector),
         }
     }
 
@@ -52,7 +52,7 @@ impl Sphere {
             material,
             is_moving: true,
             center_vec: center2 - center1,
-            bbox: AABB::from_boxes(bbox1, bbox2)
+            bbox: AABB::from_boxes(&bbox1, &bbox2),
         }
     }
 

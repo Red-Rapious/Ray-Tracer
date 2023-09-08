@@ -1,3 +1,4 @@
+use crate::aabb::AABB;
 use crate::geometry::Hittable;
 use crate::{material::Material, ray::Ray};
 use nalgebra::{Point3, Vector3};
@@ -44,17 +45,22 @@ impl HitRecord {
 /// A wrapper of a list of hittable objects.
 pub struct World {
     objects: Vec<Box<dyn Hittable + Sync>>,
+    bbox: AABB,
 }
 
 impl World {
     /// Initialises an empty world.
     pub fn empty() -> Self {
-        Self { objects: vec![] }
+        Self {
+            objects: vec![],
+            bbox: AABB::default(),
+        }
     }
 
-    /// Add a given object to the hittable list of the world.
+    /// Add a given object to the hittable list of the world, and update the bounding box correspondly.
     pub fn add(&mut self, object: impl Hittable + 'static + Sync) {
         self.objects.push(Box::new(object));
+        self.bbox = AABB::from_boxes(&self.bbox, &self.objects.last().unwrap().bounding_box());
     }
 
     /// Check if the given ray hits any hittable from the `objects` list.
