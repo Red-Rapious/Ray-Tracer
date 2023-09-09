@@ -17,12 +17,6 @@ impl BVHNode {
     pub fn new(src_objects: &mut Vec<Box<dyn Hittable + Sync>>, start: usize, end: usize) -> Self {
         let objects = src_objects;
         let axis = thread_rng().gen_range(0..3);
-        /*let comparator: dyn Fn(Box<dyn Hittable + Sync>, Box<dyn Hittable + Sync>) -> bool = match axis {
-            0 => todo!(),
-            1 => todo!(),
-            2 => todo!(),
-            _ => panic!()
-        };*/
 
         let object_span = end - start;
 
@@ -35,16 +29,18 @@ impl BVHNode {
             right = None;
         } else if object_span == 2 {
             // If there is exactly two elements, put each node as a leaf.
-            if true {
-                //comparator(objects[start], objects[start + 1]) {
-                left = objects.remove(start);
-                right = Some(objects.remove(start)); // gives initial `objects[start + 1]`
-            } else {
-                left = objects.remove(start + 1);
-                right = Some(objects.remove(start)); // gives initial `objects[start + 1]`
+            match BVHNode::box_compare(&objects[start], &objects[start + 1], axis) {
+                Ordering::Less | Ordering::Equal => {
+                    left = objects.remove(start);
+                    right = Some(objects.remove(start)); // gives initial `objects[start + 1]`
+                }
+                Ordering::Greater => {
+                    left = objects.remove(start + 1);
+                    right = Some(objects.remove(start)); // gives initial `objects[start + 1]`
+                }
             }
         } else {
-            //objects.sort();
+            objects.sort_by(|a, b| BVHNode::box_compare(a, b, axis));
 
             let mid = start + object_span / 2;
             left = Box::new(BVHNode::new(objects, start, mid));
@@ -60,8 +56,8 @@ impl BVHNode {
     }
 
     fn box_compare(
-        a: Box<dyn Hittable + Sync>,
-        b: Box<dyn Hittable + Sync>,
+        a: &Box<dyn Hittable + Sync>,
+        b: &Box<dyn Hittable + Sync>,
         axis: usize,
     ) -> Ordering {
         a.bounding_box()
