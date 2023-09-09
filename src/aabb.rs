@@ -4,7 +4,7 @@ use real_interval::RealInterval;
 use crate::ray::Ray;
 
 /// Axis-Aligned Bounding Box
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct AABB {
     pub(crate) x: RealInterval,
     pub(crate) y: RealInterval,
@@ -50,7 +50,7 @@ impl AABB {
         }
     }
 
-    fn axis(&self, axis: usize) -> &RealInterval {
+    pub fn axis(&self, axis: usize) -> &RealInterval {
         match axis {
             0 => &self.x,
             1 => &self.y,
