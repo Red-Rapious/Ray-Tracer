@@ -24,7 +24,6 @@ impl BVHNode {
         let right;
 
         if object_span == 1 {
-            // If there is exactly one element, duplicate it in each subtree
             left = objects.remove(start);
             right = None;
         } else if object_span == 2 {
@@ -44,7 +43,7 @@ impl BVHNode {
 
             let mid = start + object_span / 2;
             left = Box::new(BVHNode::new(objects, start, mid));
-            right = Some(Box::new(BVHNode::new(objects, mid, end)));
+            right = Some(Box::new(BVHNode::new(objects, start, mid)));
         }
 
         let bbox = match &right {

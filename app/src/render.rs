@@ -4,6 +4,7 @@ use lib_ray_tracer::{
     material::Material,
     world::World,
     Renderer,
+    bvh::BVHNode
 };
 use nalgebra::{Point3, Vector3};
 use rand::{thread_rng, Rng};
@@ -83,8 +84,12 @@ pub fn render() {
     let material3 = Material::Metal(Vector3::new(0.7, 0.6, 0.5), 0.0);
     world.add(Sphere::stationary(Point3::new(4.0, 1.0, 0.0), 1.0, material3));
 
-    let renderer = Renderer::new(aspect_ratio, image_width, camera);
-    let img = renderer.render_parallel_image(&world);
+    let mut world2 = World::empty();
+    let src_objects = world.objects();
+    world2.add(BVHNode::new(src_objects, 0,src_objects.len()));
 
-    img.save("generated_images/test.png").unwrap();
+    let renderer = Renderer::new(aspect_ratio, image_width, camera);
+    let img = renderer.render_parallel_image(&world2);
+
+    img.save("generated_images/22_refactor.png").unwrap();
 }

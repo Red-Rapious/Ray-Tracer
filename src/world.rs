@@ -84,4 +84,8 @@ impl World {
 
         hit_anything
     }
+
+    pub fn objects(&mut self) -> &mut Vec<Box<dyn Hittable + Sync>> {
+        &mut self.objects
+    }
 }
