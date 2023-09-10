@@ -1,10 +1,10 @@
 use lib_ray_tracer::{
+    bvh::BVHNode,
     camera::{self, Camera},
     geometry::Sphere,
     material::Material,
     world::World,
     Renderer,
-    bvh::BVHNode
 };
 use nalgebra::{Point3, Vector3};
 use rand::{thread_rng, Rng};
@@ -85,8 +85,9 @@ pub fn render() {
     world.add(Sphere::stationary(Point3::new(4.0, 1.0, 0.0), 1.0, material3));
 
     let mut world2 = World::empty();
-    let objects = world.objects();
-    world2.add(BVHNode::new(objects, 0, objects.len()));
+    let l = world.objects().len();
+    let mut objects = world.objects().drain(0..l).map(Some).collect();
+    world2.add(BVHNode::new(&mut objects, 0, l));
 
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_parallel_image(&world2);

@@ -14,35 +14,45 @@ pub struct BVHNode {
 }
 
 impl BVHNode {
-    pub fn new(objects: &mut Vec<Box<dyn Hittable + Sync>>, start: usize, end: usize) -> Self {
+    pub fn new(
+        objects: &mut Vec<Option<Box<dyn Hittable + Sync>>>,
+        start: usize,
+        end: usize,
+    ) -> Self {
         let axis = thread_rng().gen_range(0..3);
 
         let object_span = end - start;
 
-        let left;
-        let right;
+        let left: Box<dyn Hittable + Sync>;
+        let right: Option<Box<dyn Hittable + Sync>>;
 
         if object_span == 1 {
-            left = objects.remove(start);
+            left = std::mem::replace(&mut objects[start], None).unwrap();
             right = None;
         } else if object_span == 2 {
             // If there is exactly two elements, put each node as a leaf.
-            match BVHNode::box_compare(&objects[start], &objects[start + 1], axis) {
+            match BVHNode::box_compare(
+                &objects[start],
+                &objects[start + 1],
+                axis,
+            ) {
                 Ordering::Less | Ordering::Equal => {
-                    left = objects.remove(start);
-                    right = Some(objects.remove(start)); // gives initial `objects[start + 1]`
+                    left = std::mem::replace(&mut objects[start], None).unwrap();
+                    right = std::mem::replace(&mut objects[start + 1], None); // gives initial `objects[start + 1]`
                 }
                 Ordering::Greater => {
-                    left = objects.remove(start + 1);
-                    right = Some(objects.remove(start)); // gives initial `objects[start + 1]`
+                    left = std::mem::replace(&mut objects[start + 1], None).unwrap();
+                    right = std::mem::replace(&mut objects[start], None); // gives initial `objects[start + 1]`
                 }
             }
         } else {
-            objects.sort_by(|a, b| BVHNode::box_compare(a, b, axis));
+            objects.sort_by(|a, b| {
+                BVHNode::box_compare(&a, &b, axis)
+            });
 
             let mid = start + object_span / 2;
             left = Box::new(BVHNode::new(objects, start, mid));
-            right = Some(Box::new(BVHNode::new(objects, start, mid)));
+            right = Some(Box::new(BVHNode::new(objects, mid, end)));
         }
 
         let bbox = match &right {
@@ -54,15 +64,21 @@ impl BVHNode {
     }
 
     fn box_compare(
-        a: &Box<dyn Hittable + Sync>,
-        b: &Box<dyn Hittable + Sync>,
+        a: &Option<Box<dyn Hittable + Sync>>,
+        b: &Option<Box<dyn Hittable + Sync>>,
         axis: usize,
     ) -> Ordering {
-        a.bounding_box()
-            .axis(axis)
-            .min
-            .partial_cmp(&b.bounding_box().axis(axis).min)
-            .unwrap()
+        match (a, b) {
+            (None, None) => Ordering::Equal,
+            (Some(_), None) => Ordering::Greater,
+            (None, Some(_)) => Ordering::Less,
+            (Some(a), Some(b)) =>
+                a.bounding_box()
+                    .axis(axis)
+                    .min
+                    .partial_cmp(&b.bounding_box().axis(axis).min)
+                    .unwrap()
+        }
     }
 }
 
