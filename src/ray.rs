@@ -8,6 +8,8 @@ use crate::world::{HitRecord, World};
 pub struct Ray {
     origin: Point3<f64>,
     direction: Vector3<f64>,
+    /// The instant when the ray is emitted. 
+    /// Used to determine the position of moving objects when the ray collides them.
     time: f64,
 }
 
@@ -32,6 +34,7 @@ impl Ray {
         self.time
     }
 
+    /// Compute the position of the ray at the specific `t` index
     pub fn at(&self, t: f64) -> Point3<f64> {
         assert!(t > 0.0, "t = {t}");
         self.origin + t * self.direction

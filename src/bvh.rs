@@ -1,11 +1,11 @@
+use rand::{thread_rng, Rng};
+use real_interval::RealInterval;
 use std::cmp::Ordering;
 
 use crate::aabb::AABB;
 use crate::geometry::Hittable;
 use crate::ray::Ray;
 use crate::world::HitRecord;
-use rand::{thread_rng, Rng};
-use real_interval::RealInterval;
 
 /// A Bounding Volume Hierarchy Node.
 /// Each object is a node of the tree. The `left` and `right` hittables can be either other nodes or leafs.
@@ -14,6 +14,7 @@ pub struct BVHNode {
     left: Box<dyn Hittable + Sync>,
     /// The right node or leaf. The node may not have a right son, hence the use of `Option`.
     right: Option<Box<dyn Hittable + Sync>>,
+    /// The bouding box encapsulating every son of the node.
     bbox: AABB,
 }
 
@@ -24,6 +25,7 @@ impl BVHNode {
         start: usize,
         end: usize,
     ) -> Self {
+        // Choose a random axis to compare the boxes.
         let axis = thread_rng().gen_range(0..3);
 
         let object_span = end - start;

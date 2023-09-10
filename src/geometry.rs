@@ -1,10 +1,10 @@
+use nalgebra::{Point3, Vector3};
+use real_interval::RealInterval;
+
 use crate::aabb::AABB;
 use crate::material::Material;
 use crate::ray::Ray;
 use crate::world::HitRecord;
-
-use nalgebra::{Point3, Vector3};
-use real_interval::RealInterval;
 
 /// An object hittable by a ray.
 pub trait Hittable {

@@ -1,9 +1,9 @@
+use nalgebra::Vector3;
+use rand::{Rng, RngCore};
+
 use crate::ray::Ray;
 use crate::utility::*;
 use crate::world::HitRecord;
-
-use nalgebra::Vector3;
-use rand::{Rng, RngCore};
 
 #[derive(Clone, Copy)]
 pub enum Material {

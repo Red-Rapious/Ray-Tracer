@@ -4,6 +4,7 @@ use image::Rgba;
 use nalgebra::{Point3, Vector3};
 use rand::RngCore;
 
+/// A wrapper `struct` for camera-related parameters, and utiliy functions that depends on them.
 pub struct Camera {
     /// The simulated focus distance. Objects at this distance from the Camera won't be affected by defocus blur.
     pub(crate) focus_distance: f64,
@@ -75,8 +76,9 @@ impl Camera {
         }
     }
 
+    /// Samples a random point in the defocus disk.
     pub fn defocus_disk_sample(&self, rng: &mut dyn RngCore) -> Point3<f64> {
-        if self.disk_basis.u == Vector3::zeros() {
+        if self.disk_basis.u == Vector3::zeros() { // no defocus
             self.center
         } else {
             let p = random_in_unit_disk(rng);
@@ -85,6 +87,8 @@ impl Camera {
     }
 }
 
+/// Gamma-corectness rectification mode.
 pub enum Gamma {
+    /// Uses the square-root of the pixel value (when in the [0, 1] interval).
     Gamma2,
 }
