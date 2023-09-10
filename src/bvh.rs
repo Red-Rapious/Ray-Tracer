@@ -14,8 +14,7 @@ pub struct BVHNode {
 }
 
 impl BVHNode {
-    pub fn new(src_objects: &mut Vec<Box<dyn Hittable + Sync>>, start: usize, end: usize) -> Self {
-        let objects = src_objects;
+    pub fn new(objects: &mut Vec<Box<dyn Hittable + Sync>>, start: usize, end: usize) -> Self {
         let axis = thread_rng().gen_range(0..3);
 
         let object_span = end - start;
