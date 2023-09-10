@@ -46,7 +46,7 @@ impl BVHNode {
                 }
             }
         } else {
-            objects.sort_by(|a, b| {
+            objects[start..end].sort_by(|a, b| {
                 BVHNode::box_compare(&a, &b, axis)
             });
 
