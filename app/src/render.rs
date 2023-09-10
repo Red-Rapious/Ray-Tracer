@@ -35,7 +35,7 @@ pub fn render() {
         ground_mat,
     ));
 
-    for a in -11..11 {
+    /*for a in -11..11 {
         for b in -11..11 {
             let center = Point3::new(
                 a as f64 + 0.9 * rng.gen::<f64>(),
@@ -73,20 +73,21 @@ pub fn render() {
                 }
             }
         }
-    }
+    }*/
 
-    let material1 = Material::Dielectric(1.5);
-    world.add(Sphere::stationary(Point3::new(0.0, 1.0, 0.0), 1.0, material1));
+    /*let material1 = Material::Dielectric(1.5);
+    world.add(Sphere::stationary(Point3::new(0.0, 1.0, 0.0), 1.0, material1));*/
 
     let material2 = Material::Lambertian(Vector3::new(0.4, 0.2, 0.1));
     world.add(Sphere::stationary(Point3::new(-4.0, 1.0, 0.0), 1.0, material2));
 
-    let material3 = Material::Metal(Vector3::new(0.7, 0.6, 0.5), 0.0);
-    world.add(Sphere::stationary(Point3::new(4.0, 1.0, 0.0), 1.0, material3));
+    /*let material3 = Material::Metal(Vector3::new(0.7, 0.6, 0.5), 0.0);
+    world.add(Sphere::stationary(Point3::new(4.0, 1.0, 0.0), 1.0, material3));*/
 
     let mut world2 = World::empty();
     let src_objects = world.objects();
-    world2.add(BVHNode::new(src_objects, 0,src_objects.len()));
+    dbg!(src_objects[0].bounding_box());
+    world2.add(BVHNode::new(src_objects, 0, src_objects.len()));
 
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_parallel_image(&world2);

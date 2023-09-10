@@ -4,7 +4,7 @@ use real_interval::RealInterval;
 use crate::ray::Ray;
 
 /// Axis-Aligned Bounding Box
-#[derive(Default, Clone)]
+#[derive(Debug, Default, Clone)]
 pub struct AABB {
     pub(crate) x: RealInterval,
     pub(crate) y: RealInterval,
@@ -23,12 +23,12 @@ impl AABB {
                 max: a.x.max(b.x) as f32,
             },
             y: RealInterval {
-                min: a.x.min(b.y) as f32,
-                max: a.x.max(b.y) as f32,
+                min: a.y.min(b.y) as f32,
+                max: a.y.max(b.y) as f32,
             },
             z: RealInterval {
-                min: a.x.min(b.z) as f32,
-                max: a.x.max(b.z) as f32,
+                min: a.z.min(b.z) as f32,
+                max: a.z.max(b.z) as f32,
             },
         }
     }
