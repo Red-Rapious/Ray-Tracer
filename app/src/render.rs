@@ -84,11 +84,13 @@ pub fn render() {
     let material3 = Material::Metal(Vector3::new(0.7, 0.6, 0.5), 0.0);
     world.add(Sphere::stationary(Point3::new(4.0, 1.0, 0.0), 1.0, material3));
 
+    // Create a new world made of only one object, a `BVHNode`
     let mut world2 = World::empty();
     let l = world.objects().len();
     let mut objects = world.objects().drain(0..l).map(Some).collect();
     world2.add(BVHNode::new(&mut objects, 0, l));
 
+    // Render the world that uses BVH
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_parallel_image(&world2);
 

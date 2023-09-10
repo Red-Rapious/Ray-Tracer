@@ -92,8 +92,13 @@ impl Renderer {
             }
         }
 
+        print_progress_bar_final_info(
+            "Rendered",
+            format!("in {:?}", start_time.elapsed()).as_str(),
+            Color::Green,
+            Style::Bold,
+        );
         finalize_progress_bar();
-        println!("Rendered in {:?}.", start_time.elapsed());
 
         img
     }
