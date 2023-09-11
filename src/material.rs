@@ -5,6 +5,7 @@ use crate::ray::Ray;
 use crate::utility::*;
 use crate::world::HitRecord;
 
+// TODO: transform Material into a trait
 #[derive(Clone, Copy)]
 pub enum Material {
     Lambertian(Vector3<f64>),

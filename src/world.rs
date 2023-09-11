@@ -7,10 +7,19 @@ use real_interval::RealInterval;
 /// Record information on the latest ray hit.
 #[derive(Default, Clone)]
 pub struct HitRecord {
+    /// The point of intersection between the ray and the surface.
     pub hit_point: Point3<f64>,
+    /// The normal vector of the surface hit by the ray.
     pub normal: Vector3<f64>,
+    /// The material of the surface hit.
     pub material: Material,
+    /// The `t` value of the ray when it hit the surface.
     pub t: f64,
+    /// The surface `u` coordinate of the ray-object hit point.
+    pub u: f64,
+    /// The surface `v` coordinate of the ray-object hit point.
+    pub v: f64,
+    /// If the surface was hit on front or back.
     pub front_face: bool,
 }
 
@@ -20,6 +29,8 @@ impl HitRecord {
         normal: Vector3<f64>,
         material: Material,
         t: f64,
+        u: f64,
+        v: f64,
         front_face: bool,
     ) -> Self {
         Self {
@@ -27,6 +38,8 @@ impl HitRecord {
             normal,
             material,
             t,
+            u,
+            v,
             front_face,
         }
     }
