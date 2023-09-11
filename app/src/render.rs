@@ -3,6 +3,7 @@ use lib_ray_tracer::{
     camera::{self, Camera},
     geometry::Sphere,
     material::Material,
+    texture::Texture,
     world::World,
     Renderer,
 };
@@ -28,16 +29,14 @@ pub fn render() {
     let mut world = World::empty();
     let mut rng = thread_rng();
 
-    let ground_mat = Material::Lambertian(Vector3::new(0.5, 0.5, 0.5));
-    /*let checker = CheckerTexture::from_colors(
-        0.32,
-        Vector3::new(0.2, 0.3, 0.1),
-        Vector3::new(0.9, 0.9, 0.9),
-    );*/
+    //let ground_mat = Material::Lambertian(Vector3::new(0.5, 0.5, 0.5));
+    static EVEN: Texture = Texture::SolidColor(Vector3::new(0.2, 0.3, 0.1));
+    static ODD: Texture = Texture::SolidColor(Vector3::new(0.9, 0.9, 0.9));
+    let checker = Material::TexturedLambertian(Texture::CheckerTexture(3.0, &EVEN, &ODD));
     world.add(Sphere::stationary(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
-        ground_mat,
+        checker,
     ));
 
     for a in -11..11 {
@@ -111,5 +110,5 @@ pub fn render() {
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     let img = renderer.render_parallel_image(&world2);
 
-    img.save("generated_images/22_refactor.png").unwrap();
+    img.save("generated_images/23_checker_texture.png").unwrap();
 }

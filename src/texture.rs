@@ -11,11 +11,11 @@ impl Texture {
         match *self {
             Self::SolidColor(color) => color,
             Self::CheckerTexture(inv_scale, color_even, color_odd) => {
-                let x_int = (inv_scale * p.x) as usize;
-                let y_int = (inv_scale * p.y) as usize;
-                let z_int = (inv_scale * p.z) as usize;
+                let x_int = (inv_scale * p.x) as i32;
+                let y_int = (inv_scale * p.y) as i32;
+                let z_int = (inv_scale * p.z) as i32;
 
-                if (x_int + y_int + z_int % 2) == 0 {
+                if (x_int + y_int + z_int) % 2 == 0 {
                     color_even.value(u, v, p)
                 } else {
                     color_odd.value(u, v, p)

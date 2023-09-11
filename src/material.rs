@@ -2,6 +2,7 @@ use nalgebra::Vector3;
 use rand::{Rng, RngCore};
 
 use crate::ray::Ray;
+use crate::texture::Texture;
 use crate::utility::*;
 use crate::world::HitRecord;
 
@@ -9,6 +10,7 @@ use crate::world::HitRecord;
 #[derive(Clone, Copy)]
 pub enum Material {
     Lambertian(Vector3<f64>),
+    TexturedLambertian(Texture),
     Hemisphere(Vector3<f64>),
     Metal(Vector3<f64>, f64),
     Dielectric(f64),
@@ -37,6 +39,18 @@ impl Material {
 
                 *scattered_ray = Ray::new(hit_record.hit_point, scatter_direction, ray_in.time());
                 *attenuation = albedo;
+                true
+            }
+            TexturedLambertian(texture) => {
+                let mut scatter_direction = hit_record.normal + random_unit_vector(rng);
+
+                // Catch degenerate scatter direction
+                if scatter_direction.norm_squared() < 1e-8 {
+                    scatter_direction = hit_record.normal;
+                }
+
+                *scattered_ray = Ray::new(hit_record.hit_point, scatter_direction, ray_in.time());
+                *attenuation = texture.value(0.0, 0.0, hit_record.hit_point);
                 true
             }
             Hemisphere(albedo) => {
