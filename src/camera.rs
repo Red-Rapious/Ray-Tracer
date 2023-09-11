@@ -78,7 +78,8 @@ impl Camera {
 
     /// Samples a random point in the defocus disk.
     pub fn defocus_disk_sample(&self, rng: &mut dyn RngCore) -> Point3<f64> {
-        if self.disk_basis.u == Vector3::zeros() { // no defocus
+        if self.disk_basis.u == Vector3::zeros() {
+            // no defocus
             self.center
         } else {
             let p = random_in_unit_disk(rng);

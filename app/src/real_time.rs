@@ -41,13 +41,25 @@ pub fn run() {
     ));
 
     let material1 = Material::Dielectric(1.5);
-    world.add(Sphere::stationary(Point3::new(0.0, 1.0, 0.0), 1.0, material1));
+    world.add(Sphere::stationary(
+        Point3::new(0.0, 1.0, 0.0),
+        1.0,
+        material1,
+    ));
 
     let material2 = Material::Lambertian(Vector3::new(0.4, 0.2, 0.1));
-    world.add(Sphere::stationary(Point3::new(-4.0, 1.0, 0.0), 1.0, material2));
+    world.add(Sphere::stationary(
+        Point3::new(-4.0, 1.0, 0.0),
+        1.0,
+        material2,
+    ));
 
     let material3 = Material::Metal(Vector3::new(0.7, 0.6, 0.5), 0.0);
-    world.add(Sphere::stationary(Point3::new(4.0, 1.0, 0.0), 1.0, material3));
+    world.add(Sphere::stationary(
+        Point3::new(4.0, 1.0, 0.0),
+        1.0,
+        material3,
+    ));
 
     let window = Window::new_centered(
         "Ray Tracer",

@@ -8,7 +8,7 @@ use crate::world::{HitRecord, World};
 pub struct Ray {
     origin: Point3<f64>,
     direction: Vector3<f64>,
-    /// The instant when the ray is emitted. 
+    /// The instant when the ray is emitted.
     /// Used to determine the position of moving objects when the ray collides them.
     time: f64,
 }

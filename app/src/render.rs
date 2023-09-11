@@ -3,6 +3,7 @@ use lib_ray_tracer::{
     camera::{self, Camera},
     geometry::Sphere,
     material::Material,
+    texture::CheckerTexture,
     world::World,
     Renderer,
 };
@@ -29,6 +30,11 @@ pub fn render() {
     let mut rng = thread_rng();
 
     let ground_mat = Material::Lambertian(Vector3::new(0.5, 0.5, 0.5));
+    /*let checker = CheckerTexture::from_colors(
+        0.32,
+        Vector3::new(0.2, 0.3, 0.1),
+        Vector3::new(0.9, 0.9, 0.9),
+    );*/
     world.add(Sphere::stationary(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
@@ -76,13 +82,25 @@ pub fn render() {
     }
 
     let material1 = Material::Dielectric(1.5);
-    world.add(Sphere::stationary(Point3::new(0.0, 1.0, 0.0), 1.0, material1));
+    world.add(Sphere::stationary(
+        Point3::new(0.0, 1.0, 0.0),
+        1.0,
+        material1,
+    ));
 
     let material2 = Material::Lambertian(Vector3::new(0.4, 0.2, 0.1));
-    world.add(Sphere::stationary(Point3::new(-4.0, 1.0, 0.0), 1.0, material2));
+    world.add(Sphere::stationary(
+        Point3::new(-4.0, 1.0, 0.0),
+        1.0,
+        material2,
+    ));
 
     let material3 = Material::Metal(Vector3::new(0.7, 0.6, 0.5), 0.0);
-    world.add(Sphere::stationary(Point3::new(4.0, 1.0, 0.0), 1.0, material3));
+    world.add(Sphere::stationary(
+        Point3::new(4.0, 1.0, 0.0),
+        1.0,
+        material3,
+    ));
 
     // Create a new world made of only one object, a `BVHNode`
     let mut world2 = World::empty();

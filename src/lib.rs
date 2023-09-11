@@ -14,8 +14,8 @@ pub mod bvh;
 pub mod camera;
 pub mod geometry;
 pub mod material;
-pub mod texture;
 mod ray;
+pub mod texture;
 mod utility;
 pub mod world;
 
