@@ -3,7 +3,6 @@ use lib_ray_tracer::{
     camera::{self, Camera},
     geometry::Sphere,
     material::Material,
-    texture::CheckerTexture,
     world::World,
     Renderer,
 };
