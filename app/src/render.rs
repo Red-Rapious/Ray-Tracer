@@ -9,8 +9,17 @@ use lib_ray_tracer::{
 };
 use nalgebra::{Point3, Vector3};
 use rand::{thread_rng, Rng};
+use image::{ImageBuffer, Rgba};
 
 pub fn render() {
+    let img = match 0 {
+        0 => random_spheres(),
+        _ => panic!()
+    };
+    img.save("generated_images/23_checker_texture.png").unwrap();
+}
+
+fn random_spheres() -> ImageBuffer<Rgba<u8>, Vec<u8>> {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
 
@@ -108,7 +117,5 @@ pub fn render() {
 
     // Render the world that uses BVH
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
-    let img = renderer.render_parallel_image(&world2);
-
-    img.save("generated_images/23_checker_texture.png").unwrap();
+    renderer.render_parallel_image(&world2)
 }
