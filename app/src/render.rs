@@ -32,7 +32,7 @@ pub fn render() {
     //let ground_mat = Material::Lambertian(Vector3::new(0.5, 0.5, 0.5));
     static EVEN: Texture = Texture::SolidColor(Vector3::new(0.2, 0.3, 0.1));
     static ODD: Texture = Texture::SolidColor(Vector3::new(0.9, 0.9, 0.9));
-    let checker = Material::TexturedLambertian(Texture::CheckerTexture(3.0, &EVEN, &ODD));
+    let checker = Material::TexturedLambertian(Texture::Checker(3.0, &EVEN, &ODD));
     world.add(Sphere::stationary(
         Point3::new(0.0, -1000.0, 0.0),
         1000.0,
