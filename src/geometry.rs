@@ -11,7 +11,6 @@ pub trait Hittable {
     /// Check if the given ray hits the hittable. If so, it adds informations about the hit to `hit_record`.
     fn hit(&self, ray: &Ray, t_interval: RealInterval, hit_record: &mut HitRecord) -> bool;
     fn bounding_box(&self) -> &AABB;
-    fn get_uv_coordinates(&self, point: Point3<f64>, u: &mut f64, v: &mut f64);
 }
 
 /// A basic Sphere geometry.
@@ -64,6 +63,14 @@ impl Sphere {
             self.center1
         }
     }
+
+    fn get_uv_coordinates(&self, point: Point3<f64>, u: &mut f64, v: &mut f64) {
+        let theta = f64::acos(-point.y);
+        let phi = f64::atan2(-point.z, point.x) + std::f64::consts::PI;
+
+        *u = phi / (2.0 * std::f64::consts::PI);
+        *v = theta / std::f64::consts::PI;
+    }
 }
 
 impl Hittable for Sphere {
@@ -96,6 +103,7 @@ impl Hittable for Sphere {
         // Modify the hit record accordingly
         hit_record.t = root;
         hit_record.hit_point = ray.at(hit_record.t);
+        self.get_uv_coordinates(hit_record.hit_point, &mut hit_record.u, &mut hit_record.v);
         hit_record.material = self.material;
 
         let outward_normal = (hit_record.hit_point - self.center(ray.time())) / self.radius;
@@ -106,13 +114,5 @@ impl Hittable for Sphere {
 
     fn bounding_box(&self) -> &AABB {
         &self.bbox
-    }
-
-    fn get_uv_coordinates(&self, point: Point3<f64>, u: &mut f64, v: &mut f64) {
-        let theta = f64::acos(-point.y);
-        let phi = f64::atan2(-point.z, point.x) + std::f64::consts::PI;
-
-        *u = phi / (2.0 * std::f64::consts::PI);
-        *v = theta / std::f64::consts::PI;
     }
 }

@@ -50,8 +50,7 @@ impl Material {
                 }
 
                 *scattered_ray = Ray::new(hit_record.hit_point, scatter_direction, ray_in.time());
-                // TODO: change this line to make it more general
-                *attenuation = texture.value(0.0, 0.0, hit_record.hit_point);
+                *attenuation = texture.value(hit_record.u, hit_record.v, hit_record.hit_point);
                 true
             }
             Hemisphere(albedo) => {

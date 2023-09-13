@@ -114,6 +114,4 @@ impl Hittable for BVHNode {
 
         hit_left || hit_right
     }
-
-    fn get_uv_coordinates(&self, _point: nalgebra::Point3<f64>, _u: &mut f64, _v: &mut f64) {}
 }
