@@ -34,23 +34,23 @@ impl BVHNode {
         let right: Option<Box<dyn Hittable + Sync>>;
 
         if object_span == 1 {
-            left = std::mem::replace(&mut objects[start], None).unwrap();
+            left = objects[start].take().unwrap();
             // If there is only one element, there is no right leaf.
             right = None;
         } else if object_span == 2 {
             // If there is exactly two elements, put each node as a leaf.
             match BVHNode::box_compare(&objects[start], &objects[start + 1], axis) {
                 Ordering::Less | Ordering::Equal => {
-                    left = std::mem::replace(&mut objects[start], None).unwrap();
-                    right = std::mem::replace(&mut objects[start + 1], None); // gives initial `objects[start + 1]`
+                    left = objects[start].take().unwrap();
+                    right = objects[start + 1].take();
                 }
                 Ordering::Greater => {
-                    left = std::mem::replace(&mut objects[start + 1], None).unwrap();
-                    right = std::mem::replace(&mut objects[start], None); // gives initial `objects[start + 1]`
+                    left = objects[start+1].take().unwrap();
+                    right = objects[start].take();
                 }
             }
         } else {
-            objects[start..end].sort_by(|a, b| BVHNode::box_compare(&a, &b, axis));
+            objects[start..end].sort_by(|a, b| BVHNode::box_compare(a, b, axis));
 
             let mid = start + object_span / 2;
             left = Box::new(BVHNode::new(objects, start, mid));
@@ -58,7 +58,7 @@ impl BVHNode {
         }
 
         let bbox = match &right {
-            Some(right_node) => AABB::from_boxes(&left.bounding_box(), &right_node.bounding_box()),
+            Some(right_node) => AABB::from_boxes(left.bounding_box(), right_node.bounding_box()),
             None => left.bounding_box().clone(),
         };
 
@@ -114,4 +114,6 @@ impl Hittable for BVHNode {
 
         hit_left || hit_right
     }
+
+    fn get_uv_coordinates(&self, _point: nalgebra::Point3<f64>, _u: &mut f64, _v: &mut f64) {}
 }

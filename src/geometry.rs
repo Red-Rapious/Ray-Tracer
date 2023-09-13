@@ -11,6 +11,7 @@ pub trait Hittable {
     /// Check if the given ray hits the hittable. If so, it adds informations about the hit to `hit_record`.
     fn hit(&self, ray: &Ray, t_interval: RealInterval, hit_record: &mut HitRecord) -> bool;
     fn bounding_box(&self) -> &AABB;
+    fn get_uv_coordinates(&self, point: Point3<f64>, u: &mut f64, v: &mut f64);
 }
 
 /// A basic Sphere geometry.
@@ -105,5 +106,13 @@ impl Hittable for Sphere {
 
     fn bounding_box(&self) -> &AABB {
         &self.bbox
+    }
+
+    fn get_uv_coordinates(&self, point: Point3<f64>, u: &mut f64, v: &mut f64) {
+        let theta = f64::acos(-point.y);
+        let phi = f64::atan2(-point.z, point.x) + std::f64::consts::PI;
+
+        *u = phi / (2.0 * std::f64::consts::PI);
+        *v = theta / std::f64::consts::PI;
     }
 }

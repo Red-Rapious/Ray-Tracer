@@ -73,7 +73,7 @@ impl World {
     /// Add a given object to the hittable list of the world, and update the bounding box correspondly.
     pub fn add(&mut self, object: impl Hittable + 'static + Sync) {
         self.objects.push(Box::new(object));
-        self.bbox = AABB::from_boxes(&self.bbox, &self.objects.last().unwrap().bounding_box());
+        self.bbox = AABB::from_boxes(&self.bbox, self.objects.last().unwrap().bounding_box());
     }
 
     /// Check if the given ray hits any hittable from the `objects` list.
