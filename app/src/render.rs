@@ -12,11 +12,12 @@ use rand::{thread_rng, Rng};
 use image::{ImageBuffer, Rgba};
 
 pub fn render() {
-    let img = match 0 {
+    let img = match 1 {
         0 => random_spheres(),
+        1 => two_spheres(),
         _ => panic!()
     };
-    img.save("generated_images/23_checker_texture.png").unwrap();
+    img.save("generated_images/24_two_spheres.png").unwrap();
 }
 
 fn random_spheres() -> ImageBuffer<Rgba<u8>, Vec<u8>> {
@@ -107,6 +108,51 @@ fn random_spheres() -> ImageBuffer<Rgba<u8>, Vec<u8>> {
         Point3::new(4.0, 1.0, 0.0),
         1.0,
         material3,
+    ));
+
+    // Create a new world made of only one object, a `BVHNode`
+    let mut world2 = World::empty();
+    let l = world.objects().len();
+    let mut objects = world.objects().drain(0..l).map(Some).collect();
+    world2.add(BVHNode::new(&mut objects, 0, l));
+
+    // Render the world that uses BVH
+    let renderer = Renderer::new(aspect_ratio, image_width, camera);
+    renderer.render_parallel_image(&world2)
+}
+
+fn two_spheres() -> ImageBuffer<Rgba<u8>, Vec<u8>> {
+    let aspect_ratio = 16.0 / 9.0;
+    let image_width = 400;
+
+    let camera = Camera::new(
+        100,
+        50,
+        20.0,
+        Point3::new(13.0, 2.0, 3.0),
+        Point3::new(0.0, 0.0, 0.0),
+        Vector3::new(0.0, 1.0, 0.0),
+        camera::Gamma::Gamma2,
+        0.6,
+        10.0,
+    );
+
+    let mut world = World::empty();
+    let mut rng = thread_rng();
+
+    static EVEN: Texture = Texture::SolidColor(Vector3::new(0.2, 0.3, 0.1));
+    static ODD: Texture = Texture::SolidColor(Vector3::new(0.9, 0.9, 0.9));
+    let checker = Material::TexturedLambertian(Texture::Checker(3.0, &EVEN, &ODD));
+    world.add(Sphere::stationary(
+        Point3::new(0.0, -10.0, 0.0),
+        10.0,
+        checker,
+    ));
+
+    world.add(Sphere::stationary(
+        Point3::new(0.0, 10.0, 0.0),
+        10.0,
+        checker,
     ));
 
     // Create a new world made of only one object, a `BVHNode`
