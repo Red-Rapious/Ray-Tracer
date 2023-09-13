@@ -12,9 +12,10 @@ use rand::{thread_rng, Rng};
 use image::{ImageBuffer, Rgba};
 
 pub fn render() {
-    let img = match 1 {
+    let img = match 2 {
         0 => random_spheres(),
         1 => two_spheres(),
+        //2 => earth(),
         _ => panic!()
     };
     img.save("generated_images/24_two_spheres.png").unwrap();
@@ -165,3 +166,35 @@ fn two_spheres() -> ImageBuffer<Rgba<u8>, Vec<u8>> {
     let renderer = Renderer::new(aspect_ratio, image_width, camera);
     renderer.render_parallel_image(&world2)
 }
+
+/*fn earth() -> ImageBuffer<Rgba<u8>, Vec<u8>> {
+    let camera = Camera::new(
+        100,
+        50,
+        20.0,
+        Point3::new(0.0, 0.0, 12.0),
+        Point3::new(0.0, 0.0, 0.0),
+        Vector3::new(0.0, 1.0, 0.0),
+        camera::Gamma::Gamma2,
+        0.0,
+        10.0,
+    );
+
+    let mut world = World::empty();
+    let mut rng = thread_rng();
+
+    let earth_image: DynamicImage = image::open("./assets/earthmap.jpg").unwrap();
+    let earth_surface = Material::TexturedLambertian(Texture::Image(&earth_image));
+    world.add(Sphere::stationary(Point3::new(0.0, 0.0, 0.0), 2.0, earth_surface));
+
+
+    // Create a new world made of only one object, a `BVHNode`
+    let mut world2 = World::empty();
+    let l = world.objects().len();
+    let mut objects = world.objects().drain(0..l).map(Some).collect();
+    world2.add(BVHNode::new(&mut objects, 0, l));
+
+    // Render the world that uses BVH
+    let renderer = Renderer::new(16.0/9.0, 400, camera);
+    renderer.render_parallel_image(&world2)
+}*/
