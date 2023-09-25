@@ -25,6 +25,7 @@ pub struct Camera {
 }
 
 impl Camera {
+    #[allow(clippy::too_many_arguments)]
     pub fn new(
         samples_per_pixel: usize,
         max_depth: usize,

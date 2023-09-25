@@ -139,7 +139,6 @@ fn two_spheres() -> ImageBuffer<Rgba<u8>, Vec<u8>> {
     );
 
     let mut world = World::empty();
-    let mut rng = thread_rng();
 
     static EVEN: Texture = Texture::SolidColor(Vector3::new(0.2, 0.3, 0.1));
     static ODD: Texture = Texture::SolidColor(Vector3::new(0.9, 0.9, 0.9));

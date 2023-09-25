@@ -5,6 +5,7 @@ use crate::ray::Ray;
 
 /// Axis-Aligned Bounding Box
 #[derive(Debug, Default, Clone)]
+#[allow(clippy::upper_case_acronyms)]
 pub struct AABB {
     pub(crate) x: RealInterval,
     pub(crate) y: RealInterval,
