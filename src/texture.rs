@@ -9,6 +9,8 @@ pub enum Texture {
 }
 
 impl Texture {
+    /// Computes the color of the texture at the given point `p`.
+    /// The color also depends on the mapping on the texture, given by the parameters `u` and `v`.
     pub fn value(&self, u: f64, v: f64, p: Point3<f64>) -> Vector3<f64> {
         match *self {
             Self::SolidColor(color) => color,

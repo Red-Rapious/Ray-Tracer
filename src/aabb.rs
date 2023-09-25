@@ -17,6 +17,7 @@ impl AABB {
         Self { x, y, z }
     }
 
+    /// Creates an AABB that contains both points.
     pub fn from_points(a: Point3<f64>, b: Point3<f64>) -> Self {
         Self {
             x: RealInterval {
@@ -34,6 +35,7 @@ impl AABB {
         }
     }
 
+    /// Creates an AABB that contains both boxes.
     pub fn from_boxes(box0: &AABB, box1: &AABB) -> Self {
         Self {
             x: RealInterval {
@@ -51,6 +53,7 @@ impl AABB {
         }
     }
 
+    /// Converts an `axis` integer into the corresponding axis.
     pub fn axis(&self, axis: usize) -> &RealInterval {
         match axis {
             0 => &self.x,

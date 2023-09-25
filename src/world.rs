@@ -98,6 +98,7 @@ impl World {
         hit_anything
     }
 
+    /// Returns the list of objects contained in the World
     pub fn objects(&mut self) -> &mut Vec<Box<dyn Hittable + Sync>> {
         &mut self.objects
     }
